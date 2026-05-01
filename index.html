@@ -3,32 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEWS 2 - OPD Takhli</title>
+    <title>NEWS 2 Step - OPD Takhli</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-blue: #007bff; --dark-border: #000; --soft-pink: #fff0f3; }
         body { font-family: 'Sarabun', sans-serif; background-color: var(--soft-pink); margin: 0; padding: 5px; display: flex; justify-content: center; }
-        .main-card { max-width: 450px; width: 100%; background: #fff; border-radius: 10px; border: 3px solid var(--dark-border); overflow: hidden; display: flex; flex-direction: column; }
+        .main-card { max-width: 450px; width: 100%; background: #fff; border-radius: 12px; border: 3px solid var(--dark-border); overflow: hidden; display: flex; flex-direction: column; }
         
-        /* ส่วนหัวที่กระชับลง */
-        .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 6px; text-align: center; border-bottom: 3px solid var(--dark-border); }
-        .header h1 { margin: 0; font-size: 0.9rem; }
-        .header p { margin: 1px 0; font-size: 0.7rem; }
+        .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--dark-border); }
+        .header h1 { margin: 0; font-size: 1rem; }
+        .header p { margin: 1px 0; font-size: 0.75rem; }
 
-        .body { padding: 8px; }
-        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 2px; }
-        .label { font-size: 0.8rem; font-weight: 700; flex: 1; }
-        
-        input, select { padding: 4px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Sarabun'; font-size: 0.85rem; width: 85px; text-align: center; }
-        
-        /* ส่วนแสดงผลคะแนน */
-        .result-box { text-align: center; padding: 6px; border-radius: 10px; color: White; border: 3px solid var(--dark-border); margin-top: 5px; }
-        .score-val { font-size: 2.2rem; font-weight: 700; line-height: 1; }
-        .advice { font-size: 0.75rem; font-weight: 700; margin-top: 2px; background: rgba(0,0,0,0.1); padding: 4px; border-radius: 5px; }
+        .body { padding: 15px; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .step { display: none; }
+        .step.active { display: block; }
 
-        .share-area { background: #f8f9fa; padding: 8px; text-align: center; border-top: 2px dashed #ccc; }
-        #qrcode_display { display: none; justify-content: center; margin: 8px 0; }
-        .btn-action { background: #333; color: white; border: none; padding: 8px; border-radius: 6px; font-family: 'Sarabun'; font-weight: 700; cursor: pointer; width: 100%; font-size: 0.8rem; }
+        .question-label { font-size: 1.1rem; font-weight: 700; color: #0056b3; margin-bottom: 15px; display: block; text-align: center; }
+        
+        .radio-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .radio-grid input[type="radio"] { display: none; }
+        .radio-grid label {
+            display: block; padding: 12px; background-color: #f8f9fa;
+            border: 2px solid #ccc; border-radius: 10px; cursor: pointer;
+            font-size: 0.9rem; text-align: center; font-weight: 700; transition: 0.2s;
+        }
+        .radio-grid input[type="radio"]:checked + label {
+            background-color: var(--primary-blue); color: white; border-color: var(--dark-border);
+        }
+
+        .nav-btns { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-family: 'Sarabun'; font-weight: 700; cursor: pointer; flex: 1; }
+        .btn-back { background: #6c757d; color: white; }
+        .btn-next { background: var(--primary-blue); color: white; }
+
+        .result-screen { text-align: center; }
+        .score-val { font-size: 4rem; font-weight: 700; line-height: 1; color: #333; margin: 10px 0; }
+        .advice-box { padding: 15px; border-radius: 10px; color: white; font-weight: 700; border: 3px solid var(--dark-border); }
     </style>
 </head>
 <body>
@@ -40,99 +50,165 @@
     </div>
 
     <div class="body">
-        <div class="row"><span class="label">1. RR (ครั้ง/นาที)</span><input type="number" id="rr" oninput="calc()"></div>
-        <div class="row">
-            <span class="label">2. เลือก SpO2 Scale</span>
-            <select id="scale" onchange="calc()">
-                <option value="1">Scale 1 (ทั่วไป)</option>
-                <option value="2">Scale 2 (COPD)</option>
-            </select>
+        <!-- Step 1: RR -->
+        <div class="step active" id="step1">
+            <span class="question-label">1. อัตราการหายใจ (RR)</span>
+            <div class="radio-grid">
+                <input type="radio" name="rr" id="rr3_low" value="3" onclick="nextStep(2)"><label for="rr3_low">≤ 8</label>
+                <input type="radio" name="rr" id="rr1_low" value="1" onclick="nextStep(2)"><label for="rr1_low">9 - 11</label>
+                <input type="radio" name="rr" id="rr0" value="0" onclick="nextStep(2)"><label for="rr0">12 - 20</label>
+                <input type="radio" name="rr" id="rr2_high" value="2" onclick="nextStep(2)"><label for="rr2_high">21 - 24</label>
+                <input type="radio" name="rr" id="rr3_high" value="3" onclick="nextStep(2)"><label for="rr3_high">≥ 25</label>
+            </div>
         </div>
-        <div class="row"><span class="label">3. SpO2 (%)</span><input type="number" id="spo2" oninput="calc()"></div>
-        <div class="row">
-            <span class="label">4. อากาศ/ออกซิเจน</span>
-            <select id="o2" onchange="calc()">
-                <option value="0">Air</option>
-                <option value="2">Oxygen</option>
-            </select>
-        </div>
-        <div class="row"><span class="label">5. ความดัน SBP</span><input type="number" id="sbp" oninput="calc()"></div>
-        <div class="row"><span class="label">6. ชีพจร (Pulse)</span><input type="number" id="pulse" oninput="calc()"></div>
-        <div class="row">
-            <span class="label">7. ความรู้สึกตัว</span>
-            <select id="avpu" onchange="calc()">
-                <option value="0">Alert (A)</option>
-                <option value="3">V, P, or U</option>
-            </select>
-        </div>
-        <div class="row"><span class="label">8. อุณหภูมิ (°C)</span><input type="number" step="0.1" id="temp" oninput="calc()"></div>
 
-        <div id="resultColor" class="result-box" style="background-color: #27ae60;">
-            <div style="font-size: 0.8rem; font-weight: 700;">NEWS 2 TOTAL SCORE</div>
-            <div class="score-val" id="scoreOut">0</div>
-            <div id="adviceOut" class="advice">ระดับความเสี่ยงต่ำ: ประเมินตามรอบปกติ</div>
+        <!-- Step 2: SpO2 Scale -->
+        <div class="step" id="step2">
+            <span class="question-label">2. เลือก SpO2 Scale</span>
+            <div class="radio-grid">
+                <input type="radio" name="scale" id="s1" value="1" onclick="nextStep(3)"><label for="s1">Scale 1 (คนไข้ทั่วไป)</label>
+                <input type="radio" name="scale" id="s2" value="2" onclick="nextStep(3)"><label for="s2">Scale 2 (COPD/CO2 คั่ง)</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(1)">กลับ</button></div>
         </div>
-    </div>
 
-    <div class="share-area">
-        <button class="btn-action" onclick="toggleShare()">แสดง QR Code เพื่อแชร์แอป</button>
-        <div id="qrcode_display"></div>
+        <!-- Step 3: SpO2 Value (Scale 1) -->
+        <div class="step" id="step3">
+            <span class="question-label">3. ค่า SpO2 (%)</span>
+            <div id="scale1_opts" class="radio-grid">
+                <input type="radio" name="spo2" id="sp0" value="0" onclick="nextStep(4)"><label for="sp0">≥ 96</label>
+                <input type="radio" name="spo2" id="sp1" value="1" onclick="nextStep(4)"><label for="sp1">94 - 95</label>
+                <input type="radio" name="spo2" id="sp2" value="2" onclick="nextStep(4)"><label for="sp2">92 - 93</label>
+                <input type="radio" name="spo2" id="sp3" value="3" onclick="nextStep(4)"><label for="sp3">≤ 91</label>
+            </div>
+            <div id="scale2_opts" class="radio-grid" style="display:none;">
+                <input type="radio" name="spo2_2" id="sp2_0" value="0" onclick="nextStep(4)"><label for="sp2_0">88-92 หรือ ≥93(air)</label>
+                <input type="radio" name="spo2_2" id="sp2_1" value="1" onclick="nextStep(4)"><label for="sp2_1">86 - 87</label>
+                <input type="radio" name="spo2_2" id="sp2_2" value="2" onclick="nextStep(4)"><label for="sp2_2">84 - 85</label>
+                <input type="radio" name="spo2_2" id="sp2_3" value="3" onclick="nextStep(4)"><label for="sp2_3">≤ 83 หรือ ≥93(O2)</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(2)">กลับ</button></div>
+        </div>
+
+        <!-- Step 4: Air/O2 -->
+        <div class="step" id="step4">
+            <span class="question-label">4. อากาศ (Air) หรือ ออกซิเจน?</span>
+            <div class="radio-grid">
+                <input type="radio" name="o2" id="o2_no" value="0" onclick="nextStep(5)"><label for="o2_no">Air (อากาศปกติ)</label>
+                <input type="radio" name="o2" id="o2_yes" value="2" onclick="nextStep(5)"><label for="o2_yes">Oxygen Supplement</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(3)">กลับ</button></div>
+        </div>
+
+        <!-- Step 5: SBP -->
+        <div class="step" id="step5">
+            <span class="question-label">5. ความดัน SBP (mmHg)</span>
+            <div class="radio-grid">
+                <input type="radio" name="sbp" id="sbp3_high" value="3" onclick="nextStep(6)"><label for="sbp3_high">≥ 220</label>
+                <input type="radio" name="sbp" id="sbp0" value="0" onclick="nextStep(6)"><label for="sbp0">111 - 219</label>
+                <input type="radio" name="sbp" id="sbp1" value="1" onclick="nextStep(6)"><label for="sbp1">101 - 110</label>
+                <input type="radio" name="sbp" id="sbp2" value="2" onclick="nextStep(6)"><label for="sbp2">91 - 100</label>
+                <input type="radio" name="sbp" id="sbp3_low" value="3" onclick="nextStep(6)"><label for="sbp3_low">≤ 90</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(4)">กลับ</button></div>
+        </div>
+
+        <!-- Step 6: Pulse -->
+        <div class="step" id="step6">
+            <span class="question-label">6. ชีพจร (Pulse)</span>
+            <div class="radio-grid">
+                <input type="radio" name="hr" id="hr3_high" value="3" onclick="nextStep(7)"><label for="hr3_high">≥ 131</label>
+                <input type="radio" name="hr" id="hr2_high" value="2" onclick="nextStep(7)"><label for="hr2_high">111 - 130</label>
+                <input type="radio" name="hr" id="hr1_high" value="1" onclick="nextStep(7)"><label for="hr1_high">91 - 110</label>
+                <input type="radio" name="hr" id="hr0" value="0" onclick="nextStep(7)"><label for="hr0">51 - 90</label>
+                <input type="radio" name="hr" id="hr1_low" value="1" onclick="nextStep(7)"><label for="hr1_low">41 - 50</label>
+                <input type="radio" name="hr" id="hr3_low" value="3" onclick="nextStep(7)"><label for="hr3_low">≤ 40</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(5)">กลับ</button></div>
+        </div>
+
+        <!-- Step 7: Consciousness -->
+        <div class="step" id="step7">
+            <span class="question-label">7. ความรู้สึกตัว (ACVPU)</span>
+            <div class="radio-grid">
+                <input type="radio" name="loc" id="loc0" value="0" onclick="nextStep(8)"><label for="loc0">Alert (ตื่นดี)</label>
+                <input type="radio" name="loc" id="loc3" value="3" onclick="nextStep(8)"><label for="loc3">Confusion / Voice / Pain / Unresp.</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(6)">กลับ</button></div>
+        </div>
+
+        <!-- Step 8: Temp -->
+        <div class="step" id="step8">
+            <span class="question-label">8. อุณหภูมิ (°C)</span>
+            <div class="radio-grid">
+                <input type="radio" name="t" id="t2_high" value="2" onclick="finish()"><label for="t2_high">≥ 39.1</label>
+                <input type="radio" name="t" id="t1_high" value="1" onclick="finish()"><label for="t1_high">38.1 - 39.0</label>
+                <input type="radio" name="t" id="t0" value="0" onclick="finish()"><label for="t0">36.1 - 38.0</label>
+                <input type="radio" name="t" id="t1_low" value="1" onclick="finish()"><label for="t1_low">35.1 - 36.0</label>
+                <input type="radio" name="t" id="t3_low" value="3" onclick="finish()"><label for="t3_low">≤ 35.0</label>
+            </div>
+            <div class="nav-btns"><button class="btn btn-back" onclick="prevStep(7)">กลับ</button></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="step" id="resultStep">
+            <div class="result-screen">
+                <span class="question-label">สรุปผล NEWS 2</span>
+                <div class="score-val" id="totalScore">0</div>
+                <div id="adviceBox" class="advice-box"></div>
+                <button class="btn btn-next" style="margin-top:20px; background:#333;" onclick="resetApp()">เริ่มประเมินใหม่</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    function calc() {
-        let score = 0;
-        const rr = parseInt(document.getElementById('rr').value) || 0;
-        const scale = document.getElementById('scale').value;
-        const spo2 = parseInt(document.getElementById('spo2').value) || 0;
-        const o2 = parseInt(document.getElementById('o2').value);
-        const sbp = parseInt(document.getElementById('sbp').value) || 0;
-        const pulse = parseInt(document.getElementById('pulse').value) || 0;
-        const avpu = parseInt(document.getElementById('avpu').value);
-        const temp = parseFloat(document.getElementById('temp').value) || 0;
-
-        // RR logic
-        if (rr <= 8 || rr >= 25) score += 3;
-        else if (rr >= 21) score += 2;
-        else if (rr <= 11) score += 1;
-
-        // SpO2 logic (Separated Scales)
-        if (scale == "1") {
-            if (spo2 <= 91) score += 3;
-            else if (spo2 <= 93) score += 2;
-            else if (spo2 <= 95) score += 1;
-        } else {
-            if (spo2 <= 83 || (spo2 >= 97 && o2 == 2)) score += 3;
-            else if (spo2 <= 85 || (spo2 >= 95 && o2 == 2)) score += 2;
-            else if (spo2 <= 87 || (spo2 >= 93 && o2 == 2)) score += 1;
+    let currentStep = 1;
+    function nextStep(s) {
+        if (s === 3) {
+            const scale = document.querySelector('input[name="scale"]:checked').value;
+            document.getElementById('scale1_opts').style.display = (scale === "1") ? "grid" : "none";
+            document.getElementById('scale2_opts').style.display = (scale === "2") ? "grid" : "none";
         }
-
-        // Other parameters
-        score += o2;
-        if (sbp <= 90 || sbp >= 220) score += 3; else if (sbp <= 100) score += 2; else if (sbp <= 110) score += 1;
-        if (pulse <= 40 || pulse >= 131) score += 3; else if (pulse >= 111) score += 2; else if (pulse <= 50 || pulse >= 91) score += 1;
-        score += avpu;
-        if (temp <= 35.0) score += 3; else if (temp >= 39.1) score += 2; else if (temp <= 36.0 || temp >= 38.1) score += 1;
-
-        document.getElementById('scoreOut').innerText = score;
-        const box = document.getElementById('resultColor');
-        const adv = document.getElementById('adviceOut');
-
-        if (score === 0) { box.style.backgroundColor = "#27ae60"; adv.innerText = "ความเสี่ยงต่ำ: ติดตามตามปกติ"; }
-        else if (score <= 4) { box.style.backgroundColor = "#f39c12"; adv.innerText = "ความเสี่ยงต่ำ: ประเมินซ้ำทุก 4-6 ชม."; }
-        else if (score <= 6) { box.style.backgroundColor = "#e67e22"; adv.innerText = "ความเสี่ยงปานกลาง: ประเมินทุก 1 ชม./ตามแพทย์"; }
-        else { box.style.backgroundColor = "#d63031"; adv.innerText = "ความเสี่ยงสูง: ตามทีมกู้ชีพทันที!"; }
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${s}`).classList.add('active');
+        currentStep = s;
     }
 
-    function toggleShare() {
-        const d = document.getElementById('qrcode_display');
-        if (d.style.display === "flex") d.style.display = "none";
-        else {
-            d.style.display = "flex";
-            if (d.innerHTML === "") new QRCode(d, { text: window.location.href, width: 100, height: 100 });
-        }
+    function prevStep(s) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${s}`).classList.add('active');
+        currentStep = s;
+    }
+
+    function finish() {
+        let total = 0;
+        const scale = document.querySelector('input[name="scale"]:checked').value;
+        
+        total += parseInt(document.querySelector('input[name="rr"]:checked').value);
+        if (scale === "1") total += parseInt(document.querySelector('input[name="spo2"]:checked').value);
+        else total += parseInt(document.querySelector('input[name="spo2_2"]:checked').value);
+        
+        total += parseInt(document.querySelector('input[name="o2"]:checked').value);
+        total += parseInt(document.querySelector('input[name="sbp"]:checked').value);
+        total += parseInt(document.querySelector('input[name="hr"]:checked').value);
+        total += parseInt(document.querySelector('input[name="loc"]:checked').value);
+        total += parseInt(document.querySelector('input[name="t"]:checked').value);
+
+        document.getElementById('totalScore').innerText = total;
+        const box = document.getElementById('adviceBox');
+        
+        if (total === 0) { box.style.backgroundColor = "#27ae60"; box.innerText = "เสี่ยงต่ำ: ติดตามตามรอบปกติ"; }
+        else if (total <= 4) { box.style.backgroundColor = "#f39c12"; box.innerText = "เสี่ยงต่ำ-ปานกลาง: ประเมินซ้ำทุก 4-6 ชม."; }
+        else if (total <= 6) { box.style.backgroundColor = "#e67e22"; box.innerText = "เสี่ยงปานกลาง: ประเมินทุก 1 ชม. / ตามแพทย์"; }
+        else { box.style.backgroundColor = "#d63031"; box.innerText = "เสี่ยงสูง: ตามทีมกู้ชีพทันที!"; }
+
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById('resultStep').classList.add('active');
+    }
+
+    function resetApp() {
+        location.reload();
     }
 </script>
 </body>
