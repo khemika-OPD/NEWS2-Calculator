@@ -47,8 +47,12 @@
         .score-val { font-size: 5rem; font-weight: 700; color: #333; margin: 10px 0; line-height: 1; }
         .advice-box { padding: 20px; border-radius: 15px; font-weight: 700; border: 3px solid var(--dark-border); margin: 15px 0; line-height: 1.6; }
         
-        .qr-section { text-align: center; padding: 20px; background: #f8f9fa; border-top: 2px dashed #ddd; }
-        .footer { font-size: 0.7rem; color: #888; margin-top: 10px; font-weight: 700; }
+        /* ปุ่มและส่วน QR Code แบบซ่อนได้ */
+        .qr-toggle-btn { background: none; border: none; color: #007bff; text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 10px; font-weight: 700; }
+        .qr-container { display: none; text-align: center; padding: 20px; background: #f8f9fa; border-top: 2px dashed #ddd; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .footer { font-size: 0.7rem; color: #888; margin-top: 10px; font-weight: 700; text-align: center; }
     </style>
 </head>
 <body>
@@ -60,7 +64,7 @@
     </div>
 
     <div class="body">
-        <!-- Step 1: RR -->
+        <!-- Step 1 ถึง Step 8 -->
         <div class="step active" id="step1">
             <span class="question-label">1. อัตราการหายใจ (RR)</span>
             <div class="radio-grid">
@@ -72,7 +76,6 @@
             </div>
         </div>
 
-        <!-- Step 2: Scale Selection -->
         <div class="step" id="step2">
             <span class="question-label">2. เลือก SpO2 Scale</span>
             <div class="radio-grid">
@@ -82,7 +85,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(1)">กลับ</button></div>
         </div>
 
-        <!-- Step 3: SpO2 Value -->
         <div class="step" id="step3">
             <span class="question-label">3. ค่า SpO2 (%)</span>
             <div id="scale1_opts" class="radio-grid">
@@ -100,7 +102,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(2)">กลับ</button></div>
         </div>
 
-        <!-- Step 4: Air/O2 -->
         <div class="step" id="step4">
             <span class="question-label">4. การได้รับออกซิเจน</span>
             <div class="radio-grid">
@@ -110,7 +111,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(3)">กลับ</button></div>
         </div>
 
-        <!-- Step 5: SBP -->
         <div class="step" id="step5">
             <span class="question-label">5. ความดัน SBP (mmHg)</span>
             <div class="radio-grid">
@@ -123,7 +123,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(4)">กลับ</button></div>
         </div>
 
-        <!-- Step 6: Pulse -->
         <div class="step" id="step6">
             <span class="question-label">6. ชีพจร (Pulse)</span>
             <div class="radio-grid">
@@ -137,7 +136,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(5)">กลับ</button></div>
         </div>
 
-        <!-- Step 7: ACVPU -->
         <div class="step" id="step7">
             <span class="question-label">7. ความรู้สึกตัว (ACVPU)</span>
             <div class="radio-grid">
@@ -147,7 +145,6 @@
             <div class="nav-btns"><button class="btn-nav" onclick="prevStep(6)">กลับ</button></div>
         </div>
 
-        <!-- Step 8: Temp -->
         <div class="step" id="step8">
             <span class="question-label">8. อุณหภูมิ (°C)</span>
             <div class="radio-grid">
@@ -167,28 +164,41 @@
                 <div class="score-val" id="totalScore">0</div>
                 <div id="adviceBox" class="advice-box"></div>
                 <button class="btn-nav" style="background:#333; color:white; width:100%; margin-top:10px;" onclick="location.reload()">เริ่มประเมินใหม่</button>
+                <button class="qr-toggle-btn" onclick="toggleQR()">กดเพื่อดู QR Code สำหรับแชร์แอป</button>
             </div>
         </div>
     </div>
 
-    <!-- QR Section & Footer -->
-    <div class="qr-section">
+    <!-- Hidden QR Container -->
+    <div id="qrContainer" class="qr-container">
         <div id="qrcode" style="display: flex; justify-content: center;"></div>
         <div class="footer">
-            Innovation by Khemika | Khemika-OPD Takhli<br>
-            OPD Takhli Digital Toolkit v7.1
+            Innovation by Khemika-OPD Takhli<br>
         </div>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    // สร้าง QR Code อัตโนมัติ
-    new QRCode(document.getElementById("qrcode"), {
+    // สร้าง QR Code แบบรอเรียกใช้
+    const qrDiv = document.getElementById("qrcode");
+    const qrcode = new QRCode(qrDiv, {
         text: window.location.href,
-        width: 110,
-        height: 110
+        width: 120,
+        height: 120
     });
+
+    function toggleQR() {
+        const container = document.getElementById("qrContainer");
+        const btn = document.querySelector(".qr-toggle-btn");
+        if (container.style.display === "block") {
+            container.style.display = "none";
+            btn.innerText = "กดเพื่อดู QR Code สำหรับแชร์แอป";
+        } else {
+            container.style.display = "block";
+            btn.innerText = "ปิด QR Code";
+        }
+    }
 
     let currentStep = 1;
 
@@ -221,7 +231,6 @@
 
         const total = rr + spo2 + o2 + sbp + hr + loc + t;
 
-        // เช็ค RED Score (คะแนน 3)
         let redItems = [];
         if (rr === 3) redItems.push("อัตราการหายใจ");
         if (spo2 === 3) redItems.push("ออกซิเจนในเลือด");
