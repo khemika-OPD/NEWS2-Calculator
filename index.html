@@ -1,59 +1,262 @@
-function finish() {
-    let total = 0;
-    const scale = document.querySelector('input[name="scale"]:checked').value;
-    
-    // ดึงค่าคะแนนจากแต่ละหมวด
-    const rr = parseInt(document.querySelector('input[name="rr"]:checked').value);
-    const spo2 = (scale === "1") ? parseInt(document.querySelector('input[name="spo2"]:checked').value) : parseInt(document.querySelector('input[name="spo2_2"]:checked').value);
-    const o2 = parseInt(document.querySelector('input[name="o2"]:checked').value);
-    const sbp = parseInt(document.querySelector('input[name="sbp"]:checked').value);
-    const hr = parseInt(document.querySelector('input[name="hr"]:checked').value);
-    const loc = parseInt(document.querySelector('input[name="loc"]:checked').value);
-    const t = parseInt(document.querySelector('input[name="t"]:checked').value);
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEWS 2 Step Color - Khemika OPD Takhli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary-blue: #007bff; --dark-border: #2c3e50; --soft-pink: #fff5f7;
+            --news-0: #27ae60; --news-1: #f1c40f; --news-2: #e67e22; --news-3: #d63031;
+        }
+        body { font-family: 'Sarabun', sans-serif; background-color: var(--soft-pink); margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
+        .main-card { max-width: 450px; width: 100%; background: #fff; border-radius: 20px; border: 3px solid var(--dark-border); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        
+        .header { background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 15px; text-align: center; border-bottom: 3px solid var(--dark-border); }
+        .header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 0.5px; }
+        .header p { margin: 5px 0 0; font-size: 0.8rem; font-weight: 700; opacity: 0.9; }
 
-    total = rr + spo2 + o2 + sbp + hr + loc + t;
+        .body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    // ตรวจสอบข้อที่ได้คะแนน 3 (RED Score)
-    let redCategories = [];
-    if (rr === 3) redCategories.push("อัตราการหายใจ");
-    if (spo2 === 3) redCategories.push("ออกซิเจนในเลือด (SpO2)");
-    if (sbp === 3) redCategories.push("ความดันโลหิต (SBP)");
-    if (hr === 3) redCategories.push("อัตราการเต้นของหัวใจ");
-    if (loc === 3) redCategories.push("ระดับความรู้สึกตัว");
-    if (t === 3) redCategories.push("อุณหภูมิร่างกาย");
+        .question-label { font-size: 1.25rem; font-weight: 700; color: #0056b3; margin-bottom: 20px; display: block; text-align: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        
+        .radio-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .radio-grid input[type="radio"] { display: none; }
+        .radio-grid label {
+            display: block; padding: 15px; border-radius: 12px; cursor: pointer;
+            font-size: 1rem; text-align: center; font-weight: 700; border: 2px solid #eee; transition: 0.3s;
+        }
 
-    // แสดงคะแนนรวม
-    document.getElementById('totalScore').innerText = total;
-    const box = document.getElementById('adviceBox');
-    
-    // สร้างข้อความเตือนสีแดง ถ้ามี RED Score
-    let redAlertHtml = "";
-    if (redCategories.length > 0) {
-        redAlertHtml = `
-            <div style="background: #ffebee; border: 2px solid #ef9a9a; color: #b71c1c; padding: 15px; border-radius: 12px; margin-top: 15px; text-align: left;">
-                <b style="font-size: 1rem;">พบ RED Score ในหมวด:</b><br>
-                <span style="color: #d32f2f;">${redCategories.join(", ")}</span><br><br>
-                • แจ้งพยาบาลทันทีเพื่อพิจารณาส่งต่อห้องฉุกเฉิน ER<br>
-                • ต้องติดตามอาการอย่างใกล้ชิด
+        .btn-0 { background-color: #f8fff9; border-color: var(--news-0) !important; color: var(--news-0); }
+        .btn-1 { background-color: #fffef2; border-color: var(--news-1) !important; color: #827717; }
+        .btn-2 { background-color: #fff9f2; border-color: var(--news-2) !important; color: var(--news-2); }
+        .btn-3 { background-color: #fffafa; border-color: var(--news-3) !important; color: var(--news-3); }
+
+        input[type="radio"]:checked + .btn-0 { background-color: var(--news-0); color: white; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        input[type="radio"]:checked + .btn-1 { background-color: var(--news-1); color: white; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3); }
+        input[type="radio"]:checked + .btn-2 { background-color: var(--news-2); color: white; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3); }
+        input[type="radio"]:checked + .btn-3 { background-color: var(--news-3); color: white; box-shadow: 0 4px 10px rgba(214, 48, 49, 0.3); }
+
+        .nav-btns { display: flex; justify-content: space-between; margin-top: 25px; gap: 10px; }
+        .btn-nav { padding: 12px; border-radius: 10px; border: none; font-family: 'Sarabun'; font-weight: 700; cursor: pointer; flex: 1; transition: 0.2s; background: #e9ecef; color: #495057; border: 1px solid #ced4da; }
+
+        .score-val { font-size: 5rem; font-weight: 700; color: #333; margin: 10px 0; line-height: 1; }
+        .advice-box { padding: 20px; border-radius: 15px; font-weight: 700; border: 3px solid var(--dark-border); margin: 15px 0; line-height: 1.6; }
+        
+        .qr-section { text-align: center; padding: 20px; background: #f8f9fa; border-top: 2px dashed #ddd; }
+        .footer { font-size: 0.7rem; color: #888; margin-top: 10px; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <div class="header">
+        <h1>NEWS 2 Calculator (Step Color)</h1>
+        <p>OPD รพ.ตาคลี | พัฒนาโดย Khemika-OPD Takhli</p>
+    </div>
+
+    <div class="body">
+        <!-- Step 1: RR -->
+        <div class="step active" id="step1">
+            <span class="question-label">1. อัตราการหายใจ (RR)</span>
+            <div class="radio-grid">
+                <input type="radio" name="rr" id="rr3l" value="3" onclick="nextStep(2)"><label for="rr3l" class="btn-3">≤ 8 ครั้ง/นาที</label>
+                <input type="radio" name="rr" id="rr1l" value="1" onclick="nextStep(2)"><label for="rr1l" class="btn-1">9 - 11 ครั้ง/นาที</label>
+                <input type="radio" name="rr" id="rr0" value="0" onclick="nextStep(2)"><label for="rr0" class="btn-0">12 - 20 ครั้ง/นาที</label>
+                <input type="radio" name="rr" id="rr2h" value="2" onclick="nextStep(2)"><label for="rr2h" class="btn-2">21 - 24 ครั้ง/นาที</label>
+                <input type="radio" name="rr" id="rr3h" value="3" onclick="nextStep(2)"><label for="rr3h" class="btn-3">≥ 25 ครั้ง/นาที</label>
             </div>
-        `;
+        </div>
+
+        <!-- Step 2: Scale Selection -->
+        <div class="step" id="step2">
+            <span class="question-label">2. เลือก SpO2 Scale</span>
+            <div class="radio-grid">
+                <input type="radio" name="scale" id="s1" value="1" onclick="nextStep(3)"><label for="s1" class="btn-0">Scale 1 (คนไข้ทั่วไป)</label>
+                <input type="radio" name="scale" id="s2" value="2" onclick="nextStep(3)"><label for="s2" class="btn-2">Scale 2 (COPD / เป้าหมาย 88-92%)</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(1)">กลับ</button></div>
+        </div>
+
+        <!-- Step 3: SpO2 Value -->
+        <div class="step" id="step3">
+            <span class="question-label">3. ค่า SpO2 (%)</span>
+            <div id="scale1_opts" class="radio-grid">
+                <input type="radio" name="spo2" id="sp1_0" value="0" onclick="nextStep(4)"><label for="sp1_0" class="btn-0">≥ 96%</label>
+                <input type="radio" name="spo2" id="sp1_1" value="1" onclick="nextStep(4)"><label for="sp1_1" class="btn-1">94 - 95%</label>
+                <input type="radio" name="spo2" id="sp1_2" value="2" onclick="nextStep(4)"><label for="sp1_2" class="btn-2">92 - 93%</label>
+                <input type="radio" name="spo2" id="sp1_3" value="3" onclick="nextStep(4)"><label for="sp1_3" class="btn-3">≤ 91%</label>
+            </div>
+            <div id="scale2_opts" class="radio-grid" style="display:none;">
+                <input type="radio" name="spo2_2" id="sp2_0" value="0" onclick="nextStep(4)"><label for="sp2_0" class="btn-0">88-92% หรือ ≥93% (On Air)</label>
+                <input type="radio" name="spo2_2" id="sp2_1" value="1" onclick="nextStep(4)"><label for="sp2_1" class="btn-1">86 - 87%</label>
+                <input type="radio" name="spo2_2" id="sp2_2" value="2" onclick="nextStep(4)"><label for="sp2_2" class="btn-2">84 - 85%</label>
+                <input type="radio" name="spo2_2" id="sp2_3" value="3" onclick="nextStep(4)"><label for="sp2_3" class="btn-3">≤ 83% หรือ ≥93% (On O2)</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(2)">กลับ</button></div>
+        </div>
+
+        <!-- Step 4: Air/O2 -->
+        <div class="step" id="step4">
+            <span class="question-label">4. การได้รับออกซิเจน</span>
+            <div class="radio-grid">
+                <input type="radio" name="o2" id="o2_0" value="0" onclick="nextStep(5)"><label for="o2_0" class="btn-0">Air (อากาศปกติ)</label>
+                <input type="radio" name="o2" id="o2_2" value="2" onclick="nextStep(5)"><label for="o2_2" class="btn-2">Oxygen Supplement</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(3)">กลับ</button></div>
+        </div>
+
+        <!-- Step 5: SBP -->
+        <div class="step" id="step5">
+            <span class="question-label">5. ความดัน SBP (mmHg)</span>
+            <div class="radio-grid">
+                <input type="radio" name="sbp" id="sbp3h" value="3" onclick="nextStep(6)"><label for="sbp3h" class="btn-3">≥ 220</label>
+                <input type="radio" name="sbp" id="sbp0" value="0" onclick="nextStep(6)"><label for="sbp0" class="btn-0">111 - 219</label>
+                <input type="radio" name="sbp" id="sbp1" value="1" onclick="nextStep(6)"><label for="sbp1" class="btn-1">101 - 110</label>
+                <input type="radio" name="sbp" id="sbp2" value="2" onclick="nextStep(6)"><label for="sbp2" class="btn-2">91 - 100</label>
+                <input type="radio" name="sbp" id="sbp3l" value="3" onclick="nextStep(6)"><label for="sbp3l" class="btn-3">≤ 90</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(4)">กลับ</button></div>
+        </div>
+
+        <!-- Step 6: Pulse -->
+        <div class="step" id="step6">
+            <span class="question-label">6. ชีพจร (Pulse)</span>
+            <div class="radio-grid">
+                <input type="radio" name="hr" id="hr3h" value="3" onclick="nextStep(7)"><label for="hr3h" class="btn-3">≥ 131</label>
+                <input type="radio" name="hr" id="hr2" value="2" onclick="nextStep(7)"><label for="hr2" class="btn-2">111 - 130</label>
+                <input type="radio" name="hr" id="hr1h" value="1" onclick="nextStep(7)"><label for="hr1h" class="btn-1">91 - 110</label>
+                <input type="radio" name="hr" id="hr0" value="0" onclick="nextStep(7)"><label for="hr0" class="btn-0">51 - 90</label>
+                <input type="radio" name="hr" id="hr1l" value="1" onclick="nextStep(7)"><label for="hr1l" class="btn-1">41 - 50</label>
+                <input type="radio" name="hr" id="hr3l" value="3" onclick="nextStep(7)"><label for="hr3l" class="btn-3">≤ 40</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(5)">กลับ</button></div>
+        </div>
+
+        <!-- Step 7: ACVPU -->
+        <div class="step" id="step7">
+            <span class="question-label">7. ความรู้สึกตัว (ACVPU)</span>
+            <div class="radio-grid">
+                <input type="radio" name="loc" id="loc0" value="0" onclick="nextStep(8)"><label for="loc0" class="btn-0">Alert (ตื่นดี)</label>
+                <input type="radio" name="loc" id="loc3" value="3" onclick="nextStep(8)"><label for="loc3" class="btn-3">Confusion / V / P / U</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(6)">กลับ</button></div>
+        </div>
+
+        <!-- Step 8: Temp -->
+        <div class="step" id="step8">
+            <span class="question-label">8. อุณหภูมิ (°C)</span>
+            <div class="radio-grid">
+                <input type="radio" name="t" id="t2" value="2" onclick="finish()"><label for="t2" class="btn-2">≥ 39.1</label>
+                <input type="radio" name="t" id="t1h" value="1" onclick="finish()"><label for="t1h" class="btn-1">38.1 - 39.0</label>
+                <input type="radio" name="t" id="t0" value="0" onclick="finish()"><label for="t0" class="btn-0">36.1 - 38.0</label>
+                <input type="radio" name="t" id="t1l" value="1" onclick="finish()"><label for="t1l" class="btn-1">35.1 - 36.0</label>
+                <input type="radio" name="t" id="t3" value="3" onclick="finish()"><label for="t3" class="btn-3">≤ 35.0</label>
+            </div>
+            <div class="nav-btns"><button class="btn-nav" onclick="prevStep(7)">กลับ</button></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="step" id="resultStep">
+            <div style="text-align:center;">
+                <span class="question-label" style="color:#333;">คะแนนรวม</span>
+                <div class="score-val" id="totalScore">0</div>
+                <div id="adviceBox" class="advice-box"></div>
+                <button class="btn-nav" style="background:#333; color:white; width:100%; margin-top:10px;" onclick="location.reload()">เริ่มประเมินใหม่</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Section & Footer -->
+    <div class="qr-section">
+        <div id="qrcode" style="display: flex; justify-content: center;"></div>
+        <div class="footer">
+            Innovation by Khemika | Khemika-OPD Takhli<br>
+            OPD Takhli Digital Toolkit v7.1
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    // สร้าง QR Code อัตโนมัติ
+    new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href,
+        width: 110,
+        height: 110
+    });
+
+    let currentStep = 1;
+
+    function nextStep(s) {
+        if (s === 3) {
+            const scale = document.querySelector('input[name="scale"]:checked').value;
+            document.getElementById('scale1_opts').style.display = (scale === "1") ? "grid" : "none";
+            document.getElementById('scale2_opts').style.display = (scale === "2") ? "grid" : "none";
+        }
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${s}`).classList.add('active');
+        currentStep = s;
     }
 
-    // กำหนดสีและข้อความตามคะแนนรวม
-    if (total === 0) {
-        box.style.backgroundColor = "#e8f5e9"; box.style.color = "#2e7d32";
-        box.innerHTML = `<b>Non Urgent ไม่เร่งด่วน</b> — ให้การดูแล ตรวจสอบอาการทั่วไป แนะนำขั้นตอนการรับบริการ`;
-    } else if (total <= 4) {
-        box.style.backgroundColor = "#fff9c4"; box.style.color = "#f57f17";
-        box.innerHTML = `<b>Less Urgent เร่งด่วนน้อย</b> — รายงานพยาบาลเพื่อประเมินซ้ำ พิจารณาให้พบแพทย์ภายใน 30 นาที` + redAlertHtml;
-    } else if (total <= 6) {
-        box.style.backgroundColor = "#fff3e0"; box.style.color = "#ef6c00";
-        box.innerHTML = `<b>Urgent เร่งด่วน</b> — แจ้งพยาบาลเพื่อประเมินอาการซ้ำและส่งต่อห้องฉุกเฉิน ER` + redAlertHtml;
-    } else {
-        box.style.backgroundColor = "#ffebee"; box.style.color = "#c62828";
-        box.innerHTML = `<b>Emergent ฉุกเฉิน</b> — แจ้งพยาบาลและแพทย์เพื่อส่งต่อผู้ป่วยให้ได้รับการดูแลขั้นวิกฤต` + redAlertHtml;
+    function prevStep(s) {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById(`step${s}`).classList.add('active');
+        currentStep = s;
     }
 
-    document.getElementById(`step${currentStep}`).classList.remove('active');
-    document.getElementById('resultStep').classList.add('active');
-}
+    function finish() {
+        const scale = document.querySelector('input[name="scale"]:checked').value;
+        const rr = parseInt(document.querySelector('input[name="rr"]:checked').value);
+        const spo2 = (scale === "1") ? parseInt(document.querySelector('input[name="spo2"]:checked').value) : parseInt(document.querySelector('input[name="spo2_2"]:checked').value);
+        const o2 = parseInt(document.querySelector('input[name="o2"]:checked').value);
+        const sbp = parseInt(document.querySelector('input[name="sbp"]:checked').value);
+        const hr = parseInt(document.querySelector('input[name="hr"]:checked').value);
+        const loc = parseInt(document.querySelector('input[name="loc"]:checked').value);
+        const t = parseInt(document.querySelector('input[name="t"]:checked').value);
+
+        const total = rr + spo2 + o2 + sbp + hr + loc + t;
+
+        // เช็ค RED Score (คะแนน 3)
+        let redItems = [];
+        if (rr === 3) redItems.push("อัตราการหายใจ");
+        if (spo2 === 3) redItems.push("ออกซิเจนในเลือด");
+        if (sbp === 3) redItems.push("ความดันโลหิต");
+        if (hr === 3) redItems.push("อัตราการเต้นของหัวใจ");
+        if (loc === 3) redItems.push("ระดับความรู้สึกตัว");
+        if (t === 3) redItems.push("อุณหภูมิร่างกาย");
+
+        let redHtml = "";
+        if (redItems.length > 0) {
+            redHtml = `<div style="background:#ffebee; border:2px solid #ef9a9a; color:#b71c1c; padding:12px; border-radius:10px; margin-top:10px; font-size:0.85rem; text-align:left;">
+                <b style="color:#d32f2f;">พบ RED Score ในหมวด:</b><br>${redItems.join(", ")}<br><br>
+                • แจ้งพยาบาลทันทีเพื่อพิจารณาส่งต่อห้องฉุกเฉิน ER<br>• ต้องติดตามอาการอย่างใกล้ชิด</div>`;
+        }
+
+        const box = document.getElementById('adviceBox');
+        document.getElementById('totalScore').innerText = total;
+
+        if (total === 0) {
+            box.style.backgroundColor = "#e8f5e9"; box.style.color = "#2e7d32";
+            box.innerHTML = `<b>Non Urgent ไม่เร่งด่วน</b> — ให้การดูแล ตรวจสอบอาการทั่วไป แนะนำขั้นตอนการรับบริการ`;
+        } else if (total <= 4) {
+            box.style.backgroundColor = "#fffde7"; box.style.color = "#f57f17";
+            box.innerHTML = `<b>Less Urgent เร่งด่วนน้อย</b> — รายงานพยาบาลเพื่อประเมินซ้ำ พิจารณาให้พบแพทย์ภายใน 30 นาที` + redHtml;
+        } else if (total <= 6) {
+            box.style.backgroundColor = "#fff3e0"; box.style.color = "#ef6c00";
+            box.innerHTML = `<b>Urgent เร่งด่วน</b> — แจ้งพยาบาลเพื่อประเมินอาการซ้ำและส่งต่อห้องฉุกเฉิน ER` + redHtml;
+        } else {
+            box.style.backgroundColor = "#ffebee"; box.style.color = "#c62828";
+            box.innerHTML = `<b>Emergent ฉุกเฉิน</b> — แจ้งพยาบาลและแพทย์เพื่อส่งต่อผู้ป่วยให้ได้รับการดูแลขั้นวิกฤต` + redHtml;
+        }
+
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        document.getElementById('resultStep').classList.add('active');
+    }
+</script>
+</body>
+</html>
