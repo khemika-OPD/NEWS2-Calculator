@@ -3,19 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEWS 2 Calculator - Full Version</title>
+    <title>NEWS 2 Calculator - Full Version โดย เขมิกา พงษ์ศรี</title>
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; margin: 0; }
-        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
         .header { background: #0284c7; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: bold; }
+        .header p { margin: 4px 0 0; opacity: 0.9; font-size: 13px; }
         .content { padding: 20px; }
+        
+        /* ระบบซ่อน/แสดงทีละเรื่อง */
         .step { display: none; }
         .step.active { display: block; }
-        .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 15px; text-align: center; }
-        .option-button { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 2px solid #ddd; cursor: pointer; text-align: center; font-weight: 600; }
-        .option-button:hover { background: #f8fafc; border-color: #0284c7; }
-        .result-box { text-align: center; padding: 20px; background: #fffde7; border: 2px solid #fbc02d; border-radius: 15px; }
-        .btn-reset { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
+        
+        .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; line-height: 1.4; }
+        
+        /* ดีไซน์ปุ่มกดสีขาวขอบสีตามระดับความรุนแรงทางการแพทย์แบบดั้งเดิมที่อาจารย์ชอบ */
+        .option-button { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 16px;
+            background: #ffffff;
+            transition: all 0.15s ease;
+        }
+        .option-button:hover { background: #fffafb; transform: translateY(-1px); }
+        
+        /* สีกำกับปุ่มแยกตามระดับคะแนน */
+        .border-red { border: 2px solid #ef4444; color: #ef4444; }
+        .border-orange { border: 2px solid #f97316; color: #f97316; }
+        .border-yellow { border: 2px solid #eab308; color: #eab308; }
+        .border-green { border: 2px solid #10b981; color: #10b981; }
+        .border-blue { border: 2px solid #0284c7; color: #0284c7; } /* สำหรับปุ่มเลือกทั่วไป */
+
+        .result-box { text-align: center; padding: 25px; border-radius: 15px; margin-top: 15px; }
+        .btn-reset { width: 100%; padding: 15px; background: #475569; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-reset:hover { background: #334155; }
     </style>
 </head>
 <body>
@@ -23,93 +51,144 @@
 <div class="container">
     <div class="header">
         <h1>NEWS 2 Calculator</h1>
-        <p>OPD รพ.ตาคลี | โดย Khemika-OPD Takhli</p>
+        <p>OPD รพ.ตาคลี | พัฒนาโดย Khemika-OPD Takhli</p>
     </div>
 
     <div class="content" id="quiz">
         <div id="s1" class="step active">
             <div class="section-title">1. อัตราการหายใจ (RR)</div>
-            <div class="option-button" onclick="go(3, 's2')">≤ 8</div>
-            <div class="option-button" onclick="go(1, 's2')">9-11</div>
-            <div class="option-button" onclick="go(0, 's2')">12-20</div>
-            <div class="option-button" onclick="go(2, 's2')">21-24</div>
-            <div class="option-button" onclick="go(3, 's2')">≥ 25</div>
+            <div class="option-button border-red" onclick="saveScore('rr', 3, 's2')">≤ 8 ครั้ง/นาที</div>
+            <div class="option-button border-yellow" onclick="saveScore('rr', 1, 's2')">9-11 ครั้ง/นาที</div>
+            <div class="option-button border-green" onclick="saveScore('rr', 0, 's2')">12-20 ครั้ง/นาที</div>
+            <div class="option-button border-orange" onclick="saveScore('rr', 2, 's2')">21-24 ครั้ง/นาที</div>
+            <div class="option-button border-red" onclick="saveScore('rr', 3, 's2')">≥ 25 ครั้ง/นาที</div>
         </div>
+
         <div id="s2" class="step">
-            <div class="section-title">2. เลือก SpO2 Scale</div>
-            <div class="option-button" onclick="go(0, 's3')">Scale 1 (ทั่วไป)</div>
-            <div class="option-button" onclick="go(0, 's3')">Scale 2 (COPD)</div>
+            <div class="section-title">2. เลือกกลุ่มเป้าหมาย SpO2</div>
+            <div class="option-button border-blue" onclick="saveScore('scale_type', 1, 's3_scale1')">Scale 1 (ผู้ป่วยทั่วไป)</div>
+            <div class="option-button border-blue" onclick="saveScore('scale_type', 2, 's3_scale2')">Scale 2 (กลุ่มเสี่ยง/COPD)</div>
         </div>
-        <div id="s3" class="step">
-            <div class="section-title">3. ค่า SpO2 (%)</div>
-            <div class="option-button" onclick="go(3, 's4')">≤ 91%</div>
-            <div class="option-button" onclick="go(2, 's4')">92-93%</div>
-            <div class="option-button" onclick="go(1, 's4')">94-95%</div>
-            <div class="option-button" onclick="go(0, 's4')">≥ 96%</div>
+
+        <div id="s3_scale1" class="step">
+            <div class="section-title">3. ค่า SpO2 (Scale 1)</div>
+            <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≤ 91%</div>
+            <div class="option-button border-orange" onclick="saveScore('spo2', 2, 's4')">92-93%</div>
+            <div class="option-button border-yellow" onclick="saveScore('spo2', 1, 's4')">94-95%</div>
+            <div class="option-button border-green" onclick="saveScore('spo2', 0, 's4')">≥ 96%</div>
         </div>
+
+        <div id="s3_scale2" class="step">
+            <div class="section-title">3. ค่า SpO2 (Scale 2 - COPD)</div>
+            <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≤ 83%</div>
+            <div class="option-button border-orange" onclick="saveScore('spo2', 2, 's4')">84-85%</div>
+            <div class="option-button border-yellow" onclick="saveScore('spo2', 1, 's4')">86-87%</div>
+            <div class="option-button border-green" onclick="saveScore('spo2', 0, 's4')">88-92% (หรือ ≥93% อากาศปกติ)</div>
+            <div class="option-button border-yellow" onclick="saveScore('spo2', 1, 's4')">93-94% (ได้ O₂ Supp)</div>
+            <div class="option-button border-orange" onclick="saveScore('spo2', 2, 's4')">95-96% (ได้ O₂ Supp)</div>
+            <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≥ 97% (ได้ O₂ Supp)</div>
+        </div>
+
         <div id="s4" class="step">
-            <div class="section-title">4. การได้รับออกซิเจน</div>
-            <div class="option-button" onclick="go(0, 's5')">Air (อากาศปกติ)</div>
-            <div class="option-button" onclick="go(2, 's5')">Oxygen Supplement</div>
+            <div class="section-title">4. การได้รับออกซิเจนบำบัด</div>
+            <div class="option-button border-green" onclick="saveScore('o2_supp', 0, 's5')">Air (อากาศปกติ)</div>
+            <div class="option-button border-orange" onclick="saveScore('o2_supp', 2, 's5')">Oxygen Supplement (ดมออกซิเจน)</div>
         </div>
+
         <div id="s5" class="step">
-            <div class="section-title">5. ความดัน SBP (mmHg)</div>
-            <div class="option-button" onclick="go(3, 's6')">≤ 90</div>
-            <div class="option-button" onclick="go(1, 's6')">91-100</div>
-            <div class="option-button" onclick="go(0, 's6')">101-110</div>
-            <div class="option-button" onclick="go(0, 's6')">111-219</div>
-            <div class="option-button" onclick="go(3, 's6')">≥ 220</div>
+            <div class="section-title">5. ความดันโลหิตตัวบน SBP (mmHg)</div>
+            <div class="option-button border-red" onclick="saveScore('sbp', 3, 's6')">≤ 90</div>
+            <div class="option-button border-yellow" onclick="saveScore('sbp', 1, 's6')">91-100</div>
+            <div class="option-button border-yellow" onclick="saveScore('sbp', 1, 's6')">101-110</div>
+            <div class="option-button border-green" onclick="saveScore('sbp', 0, 's5_normal')">111-219 (ค่าปกติ)</div>
+            <div class="option-button border-red" onclick="saveScore('sbp', 3, 's6')">≥ 220</div>
         </div>
+        
+        <div id="s5_normal" class="step" style="display:none;"></div>
+
         <div id="s6" class="step">
-            <div class="section-title">6. ชีพจร (Pulse)</div>
-            <div class="option-button" onclick="go(3, 's7')">≤ 40</div>
-            <div class="option-button" onclick="go(1, 's7')">41-50</div>
-            <div class="option-button" onclick="go(0, 's7')">51-90</div>
-            <div class="option-button" onclick="go(1, 's7')">91-110</div>
-            <div class="option-button" onclick="go(2, 's7')">111-130</div>
-            <div class="option-button" onclick="go(3, 's7')">≥ 131</div>
+            <div class="section-title">6. ชีพจร / อัตราเต้นหัวใจ (Pulse)</div>
+            <div class="option-button border-red" onclick="saveScore('pulse', 3, 's7')">≤ 40 ครั้ง/นาที</div>
+            <div class="option-button border-yellow" onclick="saveScore('pulse', 1, 's7')">41-50 ครั้ง/นาที</div>
+            <div class="option-button border-green" onclick="saveScore('pulse', 0, 's7')">51-90 ครั้ง/นาที</div>
+            <div class="option-button border-yellow" onclick="saveScore('pulse', 1, 's7')">91-110 ครั้ง/นาที</div>
+            <div class="option-button border-orange" onclick="saveScore('pulse', 2, 's7')">111-130 ครั้ง/นาที</div>
+            <div class="option-button border-red" onclick="saveScore('pulse', 3, 's7')">≥ 131 ครั้ง/นาที</div>
         </div>
+
         <div id="s7" class="step">
-            <div class="section-title">7. ความรู้สึกตัว (ACVPU)</div>
-            <div class="option-button" onclick="go(0, 's8')">Alert (ตื่นดี)</div>
-            <div class="option-button" onclick="go(3, 's8')">Confusion / V / P / U</div>
+            <div class="section-title">7. ระดับความรู้สึกตัว (ACVPU)</div>
+            <div class="option-button border-green" onclick="saveScore('acvpu', 0, 's8')">Alert (ตื่นรู้ตัวดี)</div>
+            <div class="option-button border-red" onclick="saveScore('acvpu', 3, 's8')">Confusion / V / P / U (สับสน/ไม่รู้ตัว)</div>
         </div>
+
         <div id="s8" class="step">
-            <div class="section-title">8. อุณหภูมิ (°C)</div>
-            <div class="option-button" onclick="end(3)">≤ 35.0</div>
-            <div class="option-button" onclick="end(1)">35.1-36.0</div>
-            <div class="option-button" onclick="end(0)">36.1-38.0</div>
-            <div class="option-button" onclick="end(1)">38.1-39.0</div>
-            <div class="option-button" onclick="end(2)">≥ 39.1</div>
+            <div class="section-title">8. อุณหภูมิร่างกาย (°C)</div>
+            <div class="option-button border-red" onclick="calculateFinal(3)">≤ 35.0 °C</div>
+            <div class="option-button border-yellow" onclick="calculateFinal(1)">35.1 - 36.0 °C</div>
+            <div class="option-button border-green" onclick="calculateFinal(0)">36.1 - 38.0 °C</div>
+            <div class="option-button border-yellow" onclick="calculateFinal(1)">38.1 - 39.0 °C</div>
+            <div class="option-button border-orange" onclick="calculateFinal(2)">≥ 39.1 °C</div>
         </div>
 
         <div id="result" class="step">
-            <div class="section-title">ผลการประเมิน</div>
-            <div class="result-box">
-                <h2 id="finalScore" style="margin:0; font-size: 50px;">0</h2>
-                <p id="msg"></p>
+            <div class="section-title">สรุปผลการประเมิน</div>
+            <div id="res-box" class="result-box">
+                <h2 id="finalScore" style="margin:0; font-size: 55px;">0</h2>
+                <p id="msg" style="font-size: 16px; font-weight: bold; margin-top: 10px; line-height: 1.5;"></p>
             </div>
-            <button class="btn-reset" onclick="reset()">เริ่มประเมินใหม่</button>
+            <button class="btn-reset" onclick="reset()">เริ่มประเมินใหม่ (Clear Data)</button>
         </div>
     </div>
 </div>
 
 <script>
-    let score = 0;
-    function go(s, next) {
-        score += s;
+    // อ็อบเจกต์โครงสร้างล้างตัวแปร ป้องกันปัญหาคะแนนทับถมสะสมค้างเคสเก่า
+    let currentScores = { rr: 0, scale_type: 1, spo2: 0, o2_supp: 0, sbp: 0, pulse: 0, acvpu: 0, temp: 0 };
+
+    function saveScore(param, val, nextStepId) {
+        currentScores[param] = val; // บันทึกแทนที่ค่าเก่าโดยตรง ปลอดภัยต่อการกดซ้ำ
+        
+        // จัดการเปิด-ซ่อนหน้าจอทีละส่วน
         document.querySelector('.step.active').classList.remove('active');
-        document.getElementById(next).classList.add('active');
+        
+        // จัดการดักเคสพิเศษกรณี SBP ค่าปกติให้อ้อมไปโผล่ที่ชีพจรข้อ 6 ทันที
+        let actualNext = nextStepId === 's5_normal' ? 's6' : nextStepId;
+        document.getElementById(actualNext).classList.add('active');
     }
-    function end(s) {
-        score += s;
+
+    function calculateFinal(tempScore) {
+        currentScores['temp'] = tempScore;
+        
+        // รวมคะแนนจากทุกตัวแปรรายข้อที่แท้จริง
+        let total = currentScores.rr + currentScores.spo2 + currentScores.o2_supp + 
+                    currentScores.sbp + currentScores.pulse + currentScores.acvpu + currentScores.temp;
+
         document.querySelector('.step.active').classList.remove('active');
         document.getElementById('result').classList.add('active');
-        document.getElementById('finalScore').innerText = score;
-        document.getElementById('msg').innerText = score >= 5 ? "Urgent เร่งด่วน — แจ้งพยาบาลเพื่อประเมินอาการซ้ำและส่งต่อห้องฉุกเฉิน ER" : "อาการปกติ ติดตามอาการตามแผนการรักษา";
+        document.getElementById('finalScore').innerText = total;
+        
+        const resBox = document.getElementById('res-box');
+        const msgDiv = document.getElementById('msg');
+        
+        // เกณฑ์ระดับการตอบสนองเชิงคลินิกมาตรฐานสากล (NEWS 2 Clinical Response Thresholds)
+        if (total === 0) {
+            msgDiv.innerText = "ความเสี่ยงต่ำมาก (Low Risk) — ตรวจติดตามอาการตามเกณฑ์ปกติ";
+            resBox.style.background = "#d4edda"; resBox.style.borderColor = "#c3e6cb"; msgDiv.style.color = "#155724";
+        } else if (total <= 4) {
+            msgDiv.innerText = "ความเสี่ยงต่ำ (Low Risk) — พยาบาลประเมินซ้ำทุก 4-6 ชั่วโมง สังเกตอาการใกล้ชิด";
+            resBox.style.background = "#fff3cd"; resBox.style.borderColor = "#ffeeba"; msgDiv.style.color = "#856404";
+        } else if (total <= 6) {
+            msgDiv.innerText = "Urgent เร่งด่วน (Medium Risk) — มีคะแนนข้อใดข้อหนึ่งสูงระดับวิกฤต หรือรวมได้ 5-6 คะแนน รายงานแพทย์เวรทันที ประเมินซ้ำทุก 1 ชั่วโมง";
+            resBox.style.background = "#fff7ed"; resBox.style.borderColor = "#fed7aa"; msgDiv.style.color = "#c2410c";
+        } else {
+            msgDiv.innerText = "EMERGENCY วิกฤต (High Risk) — คะแนนรวม ≥ 7 คะแนน ทีมนำการพยาบาลเข้ากู้ชีพ ดันรถ Emergency คัดแยกเข้าสู่ห้องวิกฤต/ส่งต่อ ER ทันที!";
+            resBox.style.background = "#f8d7da"; resBox.style.borderColor = "#f5c6cb"; msgDiv.style.color = "#721c24";
+        }
     }
+
     function reset() {
-        score = 0;
+        currentScores = { rr: 0, scale_type: 1, spo2: 0, o2_supp: 0, sbp: 0, pulse: 0, acvpu: 0, temp: 0 };
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById('s1').classList.add('active');
     }
