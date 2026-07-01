@@ -2,58 +2,118 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>NEWS 2 Calculator - Complete Version</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEWS 2 Calculator - Full Version</title>
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; }
-        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; margin: 0; }
+        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header { background: #0284c7; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
         .step { display: none; }
         .step.active { display: block; }
-        .option-button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1.5px solid #ccc; cursor: pointer; text-align: center; font-weight: bold; }
-        .btn-clear { width: 100%; padding: 12px; background: #333; color: white; border: none; border-radius: 8px; margin-top: 20px; cursor: pointer; }
+        .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 15px; text-align: center; }
+        .option-button { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 2px solid #ddd; cursor: pointer; text-align: center; font-weight: 600; }
+        .option-button:hover { background: #f8fafc; border-color: #0284c7; }
+        .result-box { text-align: center; padding: 20px; background: #fffde7; border: 2px solid #fbc02d; border-radius: 15px; }
+        .btn-reset { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="steps-container">
-        <!-- ตัวอย่างโครงสร้าง: พี่เขมิกาสามารถเพิ่ม step จนครบ 8 ข้อตาม image_189f57.png และ image_189f9d.png -->
-        
-        <div id="step1" class="step active">
-            <h3>1. อัตราการหายใจ (RR)</h3>
-            <div class="option-button" onclick="nextStep(3, 'step2')">≤ 8</div>
-            <div class="option-button" onclick="nextStep(1, 'step2')">9-11</div>
-            <div class="option-button" onclick="nextStep(0, 'step2')">12-20</div>
-            <!-- เพิ่มตัวเลือกที่เหลือตามรูป -->
+    <div class="header">
+        <h1>NEWS 2 Calculator</h1>
+        <p>OPD รพ.ตาคลี | โดย Khemika-OPD Takhli</p>
+    </div>
+
+    <div class="content" id="quiz">
+        <div id="s1" class="step active">
+            <div class="section-title">1. อัตราการหายใจ (RR)</div>
+            <div class="option-button" onclick="go(3, 's2')">≤ 8</div>
+            <div class="option-button" onclick="go(1, 's2')">9-11</div>
+            <div class="option-button" onclick="go(0, 's2')">12-20</div>
+            <div class="option-button" onclick="go(2, 's2')">21-24</div>
+            <div class="option-button" onclick="go(3, 's2')">≥ 25</div>
+        </div>
+        <div id="s2" class="step">
+            <div class="section-title">2. เลือก SpO2 Scale</div>
+            <div class="option-button" onclick="go(0, 's3')">Scale 1 (ทั่วไป)</div>
+            <div class="option-button" onclick="go(0, 's3')">Scale 2 (COPD)</div>
+        </div>
+        <div id="s3" class="step">
+            <div class="section-title">3. ค่า SpO2 (%)</div>
+            <div class="option-button" onclick="go(3, 's4')">≤ 91%</div>
+            <div class="option-button" onclick="go(2, 's4')">92-93%</div>
+            <div class="option-button" onclick="go(1, 's4')">94-95%</div>
+            <div class="option-button" onclick="go(0, 's4')">≥ 96%</div>
+        </div>
+        <div id="s4" class="step">
+            <div class="section-title">4. การได้รับออกซิเจน</div>
+            <div class="option-button" onclick="go(0, 's5')">Air (อากาศปกติ)</div>
+            <div class="option-button" onclick="go(2, 's5')">Oxygen Supplement</div>
+        </div>
+        <div id="s5" class="step">
+            <div class="section-title">5. ความดัน SBP (mmHg)</div>
+            <div class="option-button" onclick="go(3, 's6')">≤ 90</div>
+            <div class="option-button" onclick="go(1, 's6')">91-100</div>
+            <div class="option-button" onclick="go(0, 's6')">101-110</div>
+            <div class="option-button" onclick="go(0, 's6')">111-219</div>
+            <div class="option-button" onclick="go(3, 's6')">≥ 220</div>
+        </div>
+        <div id="s6" class="step">
+            <div class="section-title">6. ชีพจร (Pulse)</div>
+            <div class="option-button" onclick="go(3, 's7')">≤ 40</div>
+            <div class="option-button" onclick="go(1, 's7')">41-50</div>
+            <div class="option-button" onclick="go(0, 's7')">51-90</div>
+            <div class="option-button" onclick="go(1, 's7')">91-110</div>
+            <div class="option-button" onclick="go(2, 's7')">111-130</div>
+            <div class="option-button" onclick="go(3, 's7')">≥ 131</div>
+        </div>
+        <div id="s7" class="step">
+            <div class="section-title">7. ความรู้สึกตัว (ACVPU)</div>
+            <div class="option-button" onclick="go(0, 's8')">Alert (ตื่นดี)</div>
+            <div class="option-button" onclick="go(3, 's8')">Confusion / V / P / U</div>
+        </div>
+        <div id="s8" class="step">
+            <div class="section-title">8. อุณหภูมิ (°C)</div>
+            <div class="option-button" onclick="end(3)">≤ 35.0</div>
+            <div class="option-button" onclick="end(1)">35.1-36.0</div>
+            <div class="option-button" onclick="end(0)">36.1-38.0</div>
+            <div class="option-button" onclick="end(1)">38.1-39.0</div>
+            <div class="option-button" onclick="end(2)">≥ 39.1</div>
         </div>
 
-        <div id="step2" class="step">
-            <h3>2. เลือก SpO2 Scale</h3>
-            <div class="option-button" onclick="nextStep(0, 'step3')">Scale 1 (คนไข้ทั่วไป)</div>
-            <div class="option-button" onclick="nextStep(0, 'step3')">Scale 2 (COPD)</div>
-        </div>
-
-        <!-- พี่เขมิกาสามารถเพิ่ม step3 ถึง step8 ได้ตามรูปแบบนี้ -->
-        
         <div id="result" class="step">
-            <h3>คะแนนรวม: <span id="totalScore">0</span></h3>
-            <p id="interpretation"></p>
-            <button class="btn-clear" onclick="resetForm()">เริ่มประเมินใหม่</button>
+            <div class="section-title">ผลการประเมิน</div>
+            <div class="result-box">
+                <h2 id="finalScore" style="margin:0; font-size: 50px;">0</h2>
+                <p id="msg"></p>
+            </div>
+            <button class="btn-reset" onclick="reset()">เริ่มประเมินใหม่</button>
         </div>
     </div>
 </div>
 
 <script>
-    let totalScore = 0;
-    function nextStep(score, nextId) {
-        totalScore += score;
+    let score = 0;
+    function go(s, next) {
+        score += s;
         document.querySelector('.step.active').classList.remove('active');
-        document.getElementById(nextId).classList.add('active');
+        document.getElementById(next).classList.add('active');
     }
-    function resetForm() {
-        totalScore = 0;
+    function end(s) {
+        score += s;
+        document.querySelector('.step.active').classList.remove('active');
+        document.getElementById('result').classList.add('active');
+        document.getElementById('finalScore').innerText = score;
+        document.getElementById('msg').innerText = score >= 5 ? "Urgent เร่งด่วน — แจ้งพยาบาลเพื่อประเมินอาการซ้ำและส่งต่อห้องฉุกเฉิน ER" : "อาการปกติ ติดตามอาการตามแผนการรักษา";
+    }
+    function reset() {
+        score = 0;
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step1').classList.add('active');
+        document.getElementById('s1').classList.add('active');
     }
 </script>
+
 </body>
 </html>
