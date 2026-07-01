@@ -7,23 +7,34 @@
     <style>
         :root {
             --primary-blue: #0284c7;
-            --bg-gray: #f1f5f9;
+            --bg-gray: #f8fafc;
             --text-dark: #1e293b;
             
-            /* Severity Colors */
-            --c-normal: #10b981; /* เขียว */
-            --c-low: #eab308;    /* เหลือง */
-            --c-med: #f97316;    /* ส้ม */
-            --c-high: #ef4444;   /* แดง */
+            /* Severity Colors (Pastel Accent) */
+            --c-high-bg: #fef2f2;
+            --c-high-border: #fee2e2;
+            --c-high-text: #991b1b;
+            
+            --c-med-bg: #fff7ed;
+            --c-med-border: #ffedd5;
+            --c-med-text: #c2410c;
+            
+            --c-low-bg: #fefce8;
+            --c-low-border: #fef9c3;
+            --c-low-text: #854d0e;
+            
+            --c-normal-bg: #f0fdf4;
+            --c-normal-border: #dcfce7;
+            --c-normal-text: #166534;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
         body { 
             font-family: 'Sarabun', sans-serif; 
-            background-color: var(--bg-gray); 
+            background-color: #f1f5f9; 
             margin: 0; 
-            padding: 15px; 
+            padding: 12px; 
             display: flex; 
             justify-content: center; 
         }
@@ -32,116 +43,99 @@
             background: white; 
             max-width: 450px; 
             width: 100%; 
-            border-radius: 20px; 
+            border-radius: 16px; 
             overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05); 
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05); 
             border: 1px solid #e2e8f0; 
         }
         
         .header { 
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
             color: white; 
-            padding: 22px 15px; 
+            padding: 16px 20px; 
             text-align: center; 
         }
-        .header h1 { margin: 0; font-size: 22px; font-weight: bold; }
-        .header p { margin: 4px 0 0; opacity: 0.9; font-size: 13px; }
+        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+        .header p { margin: 2px 0 0; opacity: 0.85; font-size: 12px; }
         
-        .content { padding: 20px; }
+        .content { padding: 16px; }
         
         .section-box {
-            margin-bottom: 20px;
-            background: #ffffff;
+            margin-bottom: 12px;
         }
 
         .section-title { 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: bold; 
             color: var(--text-dark); 
-            margin-bottom: 12px; 
+            margin-bottom: 8px; 
+            padding-bottom: 4px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* โครงสร้างปุ่มแนวนอนเต็มจอแบบเดิม แต่ปรับให้กระชับขึ้น */
+        .option-button {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-        }
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 16px;
-            background-color: var(--primary-blue);
-            border-radius: 2px;
-        }
-
-        /* *** แก้ไขจุดนี้: ใช้ CSS Grid แทน Table เพื่อควบคุมขนาดปุ่มให้เท่ากันทุกแถว *** */
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* แบ่งเป็น 2 คอลัมน์เท่ากันเป๊ะ */
-            gap: 8px; /* ระยะห่างระหว่างปุ่ม */
-        }
-
-        /* Compact Card Style */
-        .compact-card {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 10px 12px;
+            width: 100%;
+            padding: 10px 16px; /* ลด Padding ลงเพื่อให้ปุ่มแคบและกระชับ */
+            margin-bottom: 6px; /* ลดระยะห่างระหว่างปุ่ม */
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
             cursor: pointer;
             transition: all 0.15s ease;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 48px; /* ล็อกความสูงขั้นต่ำให้ปุ่มดูสม่ำเสมอ */
         }
 
-        .compact-card:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
+        .option-button:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
         }
 
-        /* เมื่อถูกกดเลือก */
-        .compact-card.active {
-            background: #f0f9ff;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        /* สถานะเมื่อถูกกดเลือก (Active) */
+        .option-button.active {
+            border-width: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        .card-content {
-            flex: 1;
-            padding-right: 8px;
-        }
-
-        .option-desc {
+        .option-text {
             font-size: 14px;
             font-weight: 600;
             color: #334155;
-            display: block;
-            line-height: 1.2;
         }
 
-        /* ป้ายคะแนนขนาดเล็กกะทัดรัดที่มุมขวา */
-        .score-indicator {
+        .score-badge {
             font-size: 12px;
             font-weight: bold;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 8px;
-            text-align: center;
-            min-width: 30px;
-            flex-shrink: 0;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #475569;
         }
 
-        /* สีป้ายคะแนนตามระดับความเสี่ยง */
-        .score-indicator.bg-normal { background-color: var(--c-normal); }
-        .score-indicator.bg-low { background-color: var(--c-low); }
-        .score-indicator.bg-med { background-color: var(--c-med); }
-        .score-indicator.bg-high { background-color: var(--c-high); }
+        /* คลาสกำหนดสีสันตามดีไซน์เดิมแต่เนียนขึ้น */
+        .option-button.active.score-3 { background-color: var(--c-high-bg); border-color: var(--c-high-border); }
+        .option-button.active.score-3 .option-text { color: var(--c-high-text); }
+        .option-button.active.score-3 .score-badge { background: var(--c-high-border); color: var(--c-high-text); }
+
+        .option-button.active.score-2 { background-color: var(--c-med-bg); border-color: var(--c-med-border); }
+        .option-button.active.score-2 .option-text { color: var(--c-med-text); }
+        .option-button.active.score-2 .score-badge { background: var(--c-med-border); color: var(--c-med-text); }
+
+        .option-button.active.score-1 { background-color: var(--c-low-bg); border-color: var(--c-low-border); }
+        .option-button.active.score-1 .option-text { color: var(--c-low-text); }
+        .option-button.active.score-1 .score-badge { background: var(--c-low-border); color: var(--c-low-text); }
+
+        .option-button.active.score-0 { background-color: var(--c-normal-bg); border-color: var(--c-normal-border); }
+        .option-button.active.score-0 .option-text { color: var(--c-normal-text); }
+        .option-button.active.score-0 .score-badge { background: var(--c-normal-border); color: var(--c-normal-text); }
 
         .footer { 
             background: #f8fafc; 
-            padding: 15px; 
+            padding: 12px; 
             text-align: center; 
-            font-size: 12px; 
+            font-size: 11px; 
             color: #64748b; 
             border-top: 1px solid #e2e8f0; 
         }
@@ -160,41 +154,29 @@
         <div class="section-box">
             <div class="section-title">1. อัตราการหายใจ (Respiratory Rate)</div>
             
-            <div class="options-grid">
-                <div class="compact-card" onclick="selectOption(this, 3)">
-                    <div class="card-content">
-                        <span class="option-desc">≤ 8 ครั้ง/นาที</span>
-                    </div>
-                    <span class="score-indicator bg-high">3</span>
-                </div>
-                
-                <div class="compact-card" onclick="selectOption(this, 1)">
-                    <div class="card-content">
-                        <span class="option-desc">9 - 11 ครั้ง/นาที</span>
-                    </div>
-                    <span class="score-indicator bg-low">1</span>
-                </div>
-                
-                <div class="compact-card" onclick="selectOption(this, 0)">
-                    <div class="card-content">
-                        <span class="option-desc">12 - 20 ครั้ง/นาที</span>
-                    </div>
-                    <span class="score-indicator bg-normal">0</span>
-                </div>
-                
-                <div class="compact-card" onclick="selectOption(this, 2)">
-                    <div class="card-content">
-                        <span class="option-desc">21 - 24 ครั้ง/นาที</span>
-                    </div>
-                    <span class="score-indicator bg-med">2</span>
-                </div>
-                
-                <div class="compact-card" onclick="selectOption(this, 3)">
-                    <div class="card-content">
-                        <span class="option-desc">≥ 25 ครั้ง/นาที</span>
-                    </div>
-                    <span class="score-indicator bg-high">3</span>
-                </div>
+            <div class="option-button score-3" onclick="selectOption(this, 3)">
+                <span class="option-text">≤ 8 ครั้ง/นาที</span>
+                <span class="score-badge">3 คะแนน</span>
+            </div>
+
+            <div class="option-button score-1" onclick="selectOption(this, 1)">
+                <span class="option-text">9 - 11 ครั้ง/นาที</span>
+                <span class="score-badge">1 คะแนน</span>
+            </div>
+
+            <div class="option-button score-0" onclick="selectOption(this, 0)">
+                <span class="option-text">12 - 20 ครั้ง/นาที</span>
+                <span class="score-badge">0 คะแนน</span>
+            </div>
+
+            <div class="option-button score-2" onclick="selectOption(this, 2)">
+                <span class="option-text">21 - 24 ครั้ง/นาที</span>
+                <span class="score-badge">2 คะแนน</span>
+            </div>
+
+            <div class="option-button score-3" onclick="selectOption(this, 3)">
+                <span class="option-text">≥ 25 ครั้ง/นาที</span>
+                <span class="score-badge">3 คะแนน</span>
             </div>
         </div>
     </div>
@@ -206,12 +188,12 @@
 
 <script>
     function selectOption(element, score) {
-        // หาพี่น้องร่วมกลุ่มใน Section นั้นๆ เพื่อลบคลาส active
+        // ค้นหาเฉพาะปุ่มภายในกลุ่มเดียวกันเพื่อลบสถานะ active เดิม
         const section = element.closest('.section-box');
-        const cards = section.querySelectorAll('.compact-card');
-        cards.forEach(card => card.classList.remove('active'));
+        const buttons = section.querySelectorAll('.option-button');
+        buttons.forEach(btn => btn.classList.remove('active'));
         
-        // ไฮไลต์ใบที่ถูกเลือกปัจจุบัน
+        // เพิ่มสถานะ active ให้ปุ่มที่ถูกกด
         element.classList.add('active');
         console.log("คะแนนที่เลือก:", score);
     }
