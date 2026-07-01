@@ -20,7 +20,13 @@
         .section-box { 
             margin-bottom: 30px; 
             padding-bottom: 15px; 
-            scroll-margin-top: 20px; /* ช่วยเว้นระยะขอบบนเมื่อหน้าจอเลื่อนอัตโนมัติ */
+            scroll-margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        /* *** ซ่อนข้อ 2 และ 3 ไว้ตั้งแต่เริ่มต้น เพื่อให้แสดงทีละเรื่อง *** */
+        .hide-step {
+            display: none;
         }
         
         .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; }
@@ -64,6 +70,20 @@
             border-width: 2.5px;
         }
 
+        .btn-clear {
+            width: 100%;
+            padding: 12px;
+            background: #64748b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-clear:hover { background: #475569; }
+
         .footer { padding: 15px; text-align: center; font-size: 12px; color: #64748b; background: #f8fafc; border-top: 1px solid #e2e8f0; }
         .dev-name { color: #0284c7; font-weight: bold; }
     </style>
@@ -81,67 +101,69 @@
         <div class="section-box" id="news-rr">
             <div class="section-title">1. อัตราการหายใจ (RR)</div>
             
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale1')">
+            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale1')">
                 ≤ 8 ครั้ง/นาที
             </div>
-            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'news-spo2-scale1')">
+            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'news-spo2-scale1')">
                 9 - 11 ครั้ง/นาที
             </div>
-            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'news-spo2-scale1')">
+            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'news-spo2-scale1')">
                 12 - 20 ครั้ง/นาที
             </div>
             <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'news-spo2-scale1')">
                 21 - 24 ครั้ง/นาที
             </div>
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale1')">
+            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale1')">
                 ≥ 25 ครั้ง/นาที
             </div>
         </div>
 
-        <div class="section-box" id="news-spo2-scale1" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+        <div class="section-box hide-step" id="news-spo2-scale1" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
             <div class="section-title">2. ค่าความอิ่มตัวของออกซิเจนทั่วไป (SpO₂ Scale 1)</div>
             
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale2')">
+            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale2')">
                 ≤ 91 %
             </div>
-            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'news-spo2-scale2')">
+            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'news-spo2-scale2')">
                 92 - 93 %
             </div>
-            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'news-spo2-scale2')">
+            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'news-spo2-scale2')">
                 94 - 95 %
             </div>
-            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'news-spo2-scale2')">
+            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'news-spo2-scale2')">
                 ≥ 96 %
             </div>
         </div>
 
-        <div class="section-box" id="news-spo2-scale2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+        <div class="section-box hide-step" id="news-spo2-scale2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
             <div class="section-title">3. ค่าออกซิเจนสำหรับผู้ป่วยเฉพาะโรค (SpO₂ Scale 2)<br><small style="font-size:12px; color:#64748b;">(สำหรับผู้ป่วยกลุ่มเสี่ยง/COPD มีเป้าหมาย O₂ 88-92%)</small></div>
             
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'end-zone')">
+            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'end-zone')">
                 ≤ 83 %
             </div>
-            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'end-zone')">
+            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'end-zone')">
                 84 - 85 %
             </div>
-            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'end-zone')">
+            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'end-zone')">
                 86 - 87 %
             </div>
-            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'end-zone')">
+            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'end-zone')">
                 88 - 92 % (หรือ ≥93% ในกรณีไม่ได้ดมออกซิเจน)
             </div>
-            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'end-zone')">
+            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'end-zone')">
                 93 - 94 % ในกรณีดมออกซิเจน (Oxygen Therapy)
             </div>
-            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'end-zone')">
+            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'end-zone')">
                 95 - 96 % ในกรณีดมออกซิเจน (Oxygen Therapy)
             </div>
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'end-zone')">
+            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'end-zone')">
                 ≥ 97 % ในกรณีดมออกซิเจน (Oxygen Therapy)
             </div>
         </div>
         
-        <div id="end-zone"></div>
+        <div id="end-zone" class="hide-step" style="text-align: center; padding: 10px;">
+            <button class="btn-clear" onclick="resetForm()">เริ่มประเมินใหม่</button>
+        </div>
     </div>
 
     <div class="footer">
@@ -150,28 +172,39 @@
 </div>
 
 <script>
-    // ดิกชันนารีสำหรับเก็บคะแนนรายข้อหลังบ้าน
     let newsScores = {};
 
-    function selectAndNext(element, score, nextSectionId) {
-        // 1. เคลียร์สถานะ active เก่าเฉพาะในกล่องข้อนั้น ๆ แล้วไฮไลต์ปุ่มปัจจุบัน
+    function selectAndShowNext(element, score, nextSectionId) {
+        // 1. ไฮไลต์ปุ่มเฉพาะข้อปัจจุบัน
         const currentSection = element.closest('.section-box');
         const siblingButtons = currentSection.querySelectorAll('.option-button');
         siblingButtons.forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
         
-        // 2. บันทึกผลคะแนนรายข้อลงในหน่วยความจำระบบ
+        // 2. บันทึกผลคะแนนลงระบบ
         const currentId = currentSection.id;
         newsScores[currentId] = score;
-        console.log(`ระบบบันทึก: ข้อ ${currentId} ได้คะแนน = ${score}`);
 
-        // 3. ตรรกะกระโดดและเลื่อนหน้าจออัตโนมัติ (Auto-scroll) แบบล็อกเป้าหมายไอดีแม่นยำ 100%
+        // 3. ปลดล็อกเปิดแสดงผลข้อถัดไป (Remove Class 'hide-step')
         const targetElement = document.getElementById(nextSectionId);
         if (targetElement) {
+            targetElement.classList.remove('hide-step'); // ปลดล็อกซ่อน ให้กล่องแสดงผลขึ้นมา
+            
+            // เลื่อนหน้าจอลงมาหาข้อที่เพิ่งเปิดแบบ Smooth
             setTimeout(() => {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 180); // หน่วงเวลาสั้นๆ เพื่อความนุ่มนวลทางสายตาพยาบาล
+            }, 150);
         }
+    }
+
+    // ฟังก์ชันรีเซ็ตค่า ซ่อนหัวข้อเพื่อเริ่มประเมินใหม่
+    function resetForm() {
+        newsScores = {};
+        document.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('news-spo2-scale1').classList.add('hide-step');
+        document.getElementById('news-spo2-scale2').classList.add('hide-step');
+        document.getElementById('end-zone').classList.add('hide-step');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
