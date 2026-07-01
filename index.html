@@ -10,19 +10,22 @@
         
         .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
         
-        /* หัวข้อส่วนบนสีน้ำเงินตามภาพลักษณ์ดั้งเดิม */
         .header { background: #0284c7; color: white; padding: 22px 15px; text-align: center; }
         .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
         .header p { margin: 4px 0 0; opacity: 0.9; font-size: 13px; }
         
         .content { padding: 20px; }
         
-        .section-box { margin-bottom: 30px; padding-bottom: 10px; }
+        /* สไตล์กล่องหัวข้อใหญ่ */
+        .section-box { 
+            margin-bottom: 30px; 
+            padding-bottom: 15px; 
+            scroll-margin-top: 20px; /* ช่วยเว้นระยะขอบบนเมื่อหน้าจอเลื่อนอัตโนมัติ */
+        }
         
-        /* ชื่อหัวข้อจัดกึ่งกลางและใช้สีน้ำเงินตามภาพ */
         .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; }
 
-        /* โครงสร้างปุ่มกดตามแบบภาพ image_17bad7.png */
+        /* โครงสร้างปุ่มกดตามแบบภาพลักษณ์ดั้งเดิมของอาจารย์ */
         .option-button {
             display: flex;
             align-items: center;
@@ -39,20 +42,18 @@
             text-align: center;
         }
 
-        /* รหัสสีขอบและสีอักษรของปุ่มตามเกณฑ์แพทย์ (ตรงตามภาพเป๊ะๆ) */
+        /* รหัสสีขอบและสีอักษรของปุ่มตามเกณฑ์สากล */
         .border-red { border: 1.5px solid #ef4444; color: #ef4444; }
         .border-yellow { border: 1.5px solid #eab308; color: #eab308; }
         .border-green { border: 1.5px solid #10b981; color: #10b981; }
         .border-orange { border: 1.5px solid #f97316; color: #f97316; }
 
-        /* เอฟเฟกต์เมื่อนำเมาส์ไปชี้ */
         .option-button:hover {
             background-color: #fffafb;
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
         }
 
-        /* เมื่อปุ่มถูกคลิกเลือก จะถมสีพื้นหลังพาสเทลให้เห็นชัดเจน */
+        /* ถมสีพื้นพาสเทลเมื่อปุ่มถูกคลิกเลือก */
         .option-button.active.border-red { background-color: #fef2f2; }
         .option-button.active.border-yellow { background-color: #fefce8; }
         .option-button.active.border-green { background-color: #f0fdf4; }
@@ -76,40 +77,71 @@
     </div>
 
     <div class="content">
-        <!-- หัวข้อที่ 1 -->
-        <div class="section-box" id="step-1">
+        
+        <div class="section-box" id="news-rr">
             <div class="section-title">1. อัตราการหายใจ (RR)</div>
             
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'step-2')">
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale1')">
                 ≤ 8 ครั้ง/นาที
             </div>
-            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'step-2')">
+            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'news-spo2-scale1')">
                 9 - 11 ครั้ง/นาที
             </div>
-            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'step-2')">
+            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'news-spo2-scale1')">
                 12 - 20 ครั้ง/นาที
             </div>
-            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'step-2')">
+            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'news-spo2-scale1')">
                 21 - 24 ครั้ง/นาที
             </div>
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'step-2')">
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale1')">
                 ≥ 25 ครั้ง/นาที
             </div>
         </div>
 
-        <!-- หัวข้อที่ 2 (ทำไว้เพื่อรองรับการกดแล้วเลื่อนหน้าจอลงมาอัตโนมัติ) -->
-        <div class="section-box" id="step-2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
-            <div class="section-title">2. ค่าความอิ่มตัวของออกซิเจน (SpO₂)</div>
+        <div class="section-box" id="news-spo2-scale1" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+            <div class="section-title">2. ค่าความอิ่มตัวของออกซิเจนทั่วไป (SpO₂ Scale 1)</div>
             
-            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'result-zone')">
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'news-spo2-scale2')">
                 ≤ 91 %
             </div>
-            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'result-zone')">
+            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'news-spo2-scale2')">
+                92 - 93 %
+            </div>
+            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'news-spo2-scale2')">
+                94 - 95 %
+            </div>
+            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'news-spo2-scale2')">
                 ≥ 96 %
             </div>
         </div>
+
+        <div class="section-box" id="news-spo2-scale2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+            <div class="section-title">3. ค่าออกซิเจนสำหรับผู้ป่วยเฉพาะโรค (SpO₂ Scale 2)<br><small style="font-size:12px; color:#64748b;">(สำหรับผู้ป่วยกลุ่มเสี่ยง/COPD มีเป้าหมาย O₂ 88-92%)</small></div>
+            
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'end-zone')">
+                ≤ 83 %
+            </div>
+            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'end-zone')">
+                84 - 85 %
+            </div>
+            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'end-zone')">
+                86 - 87 %
+            </div>
+            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'end-zone')">
+                88 - 92 % (หรือ ≥93% ในกรณีไม่ได้ดมออกซิเจน)
+            </div>
+            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'end-zone')">
+                93 - 94 % ในกรณีดมออกซิเจน (Oxygen Therapy)
+            </div>
+            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'end-zone')">
+                95 - 96 % ในกรณีดมออกซิเจน (Oxygen Therapy)
+            </div>
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'end-zone')">
+                ≥ 97 % ในกรณีดมออกซิเจน (Oxygen Therapy)
+            </div>
+        </div>
         
-        <div id="result-zone"></div>
+        <div id="end-zone"></div>
     </div>
 
     <div class="footer">
@@ -118,27 +150,27 @@
 </div>
 
 <script>
-    // ระบบบันทึกคะแนนรวมรายข้อหลังบ้าน
-    let scores = { 'step-1': null, 'step-2': null };
+    // ดิกชันนารีสำหรับเก็บคะแนนรายข้อหลังบ้าน
+    let newsScores = {};
 
-    function selectAndNext(element, score, nextStepId) {
-        // 1. จัดการไฮไลต์ปุ่มที่เลือกในกลุ่มปัจจุบัน
-        const section = element.closest('.section-box');
-        const buttons = section.querySelectorAll('.option-button');
-        buttons.forEach(btn => btn.classList.remove('active'));
+    function selectAndNext(element, score, nextSectionId) {
+        // 1. เคลียร์สถานะ active เก่าเฉพาะในกล่องข้อนั้น ๆ แล้วไฮไลต์ปุ่มปัจจุบัน
+        const currentSection = element.closest('.section-box');
+        const siblingButtons = currentSection.querySelectorAll('.option-button');
+        siblingButtons.forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
         
-        // 2. บันทึกคะแนน
-        const currentStepId = section.id;
-        scores[currentStepId] = score;
-        console.log(`บันทึกข้อ ${currentStepId} = ${score} คะแนน`);
+        // 2. บันทึกผลคะแนนรายข้อลงในหน่วยความจำระบบ
+        const currentId = currentSection.id;
+        newsScores[currentId] = score;
+        console.log(`ระบบบันทึก: ข้อ ${currentId} ได้คะแนน = ${score}`);
 
-        // 3. ระบบเลื่อนหน้าจอไปยังส่วนถัดไปทันทีอย่างนุ่มนวล (Auto-scroll)
-        const nextTarget = document.getElementById(nextStepId);
-        if (nextTarget) {
+        // 3. ตรรกะกระโดดและเลื่อนหน้าจออัตโนมัติ (Auto-scroll) แบบล็อกเป้าหมายไอดีแม่นยำ 100%
+        const targetElement = document.getElementById(nextSectionId);
+        if (targetElement) {
             setTimeout(() => {
-                nextTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 180); // หน่วงเวลา 0.18 วินาทีให้เห็นเอฟเฟกต์การเลือกก่อนเลื่อนจอ
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 180); // หน่วงเวลาสั้นๆ เพื่อความนุ่มนวลทางสายตาพยาบาล
         }
     }
 </script>
