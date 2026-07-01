@@ -3,208 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEWS 2 Calculator (Step Color)</title>
+    <title>NEWS 2 Calculator - Khemika Takhli</title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; margin: 0; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header { background: #0284c7; color: white; padding: 20px; text-align: center; }
+        .content { padding: 25px; }
         
-        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+        /* การสลับหน้าจอ */
+        .step { display: none; }
+        .step.active { display: block; animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         
-        .header { background: #0284c7; color: white; padding: 22px 15px; text-align: center; }
-        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
-        .header p { margin: 4px 0 0; opacity: 0.9; font-size: 13px; }
+        .section-title { font-size: 19px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; }
+        .option-button { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; font-weight: 600; border: 2px solid #ddd; cursor: pointer; text-align: center; transition: all 0.2s; background: white; }
+        .option-button:hover { background: #f8fafc; }
         
-        .content { padding: 20px; }
+        /* สีตามระดับความรุนแรง */
+        .border-red { border-color: #ef4444; color: #b91c1c; }
+        .border-orange { border-color: #f97316; color: #c2410c; }
+        .border-yellow { border-color: #eab308; color: #a16207; }
+        .border-green { border-color: #10b981; color: #065f46; }
         
-        /* สไตล์กล่องหัวข้อใหญ่ */
-        .section-box { 
-            margin-bottom: 30px; 
-            padding-bottom: 15px; 
-            scroll-margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        /* *** ซ่อนข้อ 2 และ 3 ไว้ตั้งแต่เริ่มต้น เพื่อให้แสดงทีละเรื่อง *** */
-        .hide-step {
-            display: none;
-        }
-        
-        .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; }
-
-        /* โครงสร้างปุ่มกดตามแบบภาพลักษณ์ดั้งเดิมของอาจารย์ */
-        .option-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 14px 15px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            background: #ffffff;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            text-align: center;
-        }
-
-        /* รหัสสีขอบและสีอักษรของปุ่มตามเกณฑ์สากล */
-        .border-red { border: 1.5px solid #ef4444; color: #ef4444; }
-        .border-yellow { border: 1.5px solid #eab308; color: #eab308; }
-        .border-green { border: 1.5px solid #10b981; color: #10b981; }
-        .border-orange { border: 1.5px solid #f97316; color: #f97316; }
-
-        .option-button:hover {
-            background-color: #fffafb;
-            transform: translateY(-1px);
-        }
-
-        /* ถมสีพื้นพาสเทลเมื่อปุ่มถูกคลิกเลือก */
-        .option-button.active.border-red { background-color: #fef2f2; }
-        .option-button.active.border-yellow { background-color: #fefce8; }
-        .option-button.active.border-green { background-color: #f0fdf4; }
-        .option-button.active.border-orange { background-color: #fff7ed; }
-        
-        .option-button.active {
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
-            border-width: 2.5px;
-        }
-
-        .btn-clear {
-            width: 100%;
-            padding: 12px;
-            background: #64748b;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-clear:hover { background: #475569; }
-
-        .footer { padding: 15px; text-align: center; font-size: 12px; color: #64748b; background: #f8fafc; border-top: 1px solid #e2e8f0; }
-        .dev-name { color: #0284c7; font-weight: bold; }
+        .result-box { text-align: center; padding: 20px; border-radius: 15px; background: #f8fafc; margin-top: 20px; }
+        .btn-clear { width: 100%; padding: 14px; background: #64748b; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>NEWS 2 Calculator (Step Color)</h1>
-        <p>OPD รพ.ตาคลี | พัฒนาโดย Khemika-OPD Takhli</p>
+        <h1>NEWS 2 Calculator</h1>
+        <p>พัฒนาโดย Khemika-OPD Takhli</p>
     </div>
 
     <div class="content">
-        
-        <div class="section-box" id="news-rr">
+        <div id="step1" class="step active">
             <div class="section-title">1. อัตราการหายใจ (RR)</div>
-            
-            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale1')">
-                ≤ 8 ครั้ง/นาที
-            </div>
-            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'news-spo2-scale1')">
-                9 - 11 ครั้ง/นาที
-            </div>
-            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'news-spo2-scale1')">
-                12 - 20 ครั้ง/นาที
-            </div>
-            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'news-spo2-scale1')">
-                21 - 24 ครั้ง/นาที
-            </div>
-            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale1')">
-                ≥ 25 ครั้ง/นาที
-            </div>
+            <div class="option-button border-red" onclick="nextStep(3, 'step2')">≤ 8 ครั้ง/นาที</div>
+            <div class="option-button border-yellow" onclick="nextStep(1, 'step2')">9 - 11 ครั้ง/นาที</div>
+            <div class="option-button border-green" onclick="nextStep(0, 'step2')">12 - 20 ครั้ง/นาที</div>
+            <div class="option-button border-orange" onclick="nextStep(2, 'step2')">21 - 24 ครั้ง/นาที</div>
+            <div class="option-button border-red" onclick="nextStep(3, 'step2')">≥ 25 ครั้ง/นาที</div>
         </div>
 
-        <div class="section-box hide-step" id="news-spo2-scale1" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
-            <div class="section-title">2. ค่าความอิ่มตัวของออกซิเจนทั่วไป (SpO₂ Scale 1)</div>
-            
-            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'news-spo2-scale2')">
-                ≤ 91 %
-            </div>
-            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'news-spo2-scale2')">
-                92 - 93 %
-            </div>
-            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'news-spo2-scale2')">
-                94 - 95 %
-            </div>
-            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'news-spo2-scale2')">
-                ≥ 96 %
-            </div>
+        <div id="step2" class="step">
+            <div class="section-title">2. ค่า SpO₂ (Scale 1)</div>
+            <div class="option-button border-red" onclick="nextStep(3, 'step3')">≤ 91 %</div>
+            <div class="option-button border-orange" onclick="nextStep(2, 'step3')">92 - 93 %</div>
+            <div class="option-button border-yellow" onclick="nextStep(1, 'step3')">94 - 95 %</div>
+            <div class="option-button border-green" onclick="nextStep(0, 'step3')">≥ 96 %</div>
         </div>
 
-        <div class="section-box hide-step" id="news-spo2-scale2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
-            <div class="section-title">3. ค่าออกซิเจนสำหรับผู้ป่วยเฉพาะโรค (SpO₂ Scale 2)<br><small style="font-size:12px; color:#64748b;">(สำหรับผู้ป่วยกลุ่มเสี่ยง/COPD มีเป้าหมาย O₂ 88-92%)</small></div>
-            
-            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'end-zone')">
-                ≤ 83 %
-            </div>
-            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'end-zone')">
-                84 - 85 %
-            </div>
-            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'end-zone')">
-                86 - 87 %
-            </div>
-            <div class="option-button border-green" onclick="selectAndShowNext(this, 0, 'end-zone')">
-                88 - 92 % (หรือ ≥93% ในกรณีไม่ได้ดมออกซิเจน)
-            </div>
-            <div class="option-button border-yellow" onclick="selectAndShowNext(this, 1, 'end-zone')">
-                93 - 94 % ในกรณีดมออกซิเจน (Oxygen Therapy)
-            </div>
-            <div class="option-button border-orange" onclick="selectAndShowNext(this, 2, 'end-zone')">
-                95 - 96 % ในกรณีดมออกซิเจน (Oxygen Therapy)
-            </div>
-            <div class="option-button border-red" onclick="selectAndShowNext(this, 3, 'end-zone')">
-                ≥ 97 % ในกรณีดมออกซิเจน (Oxygen Therapy)
-            </div>
+        <div id="step3" class="step">
+            <div class="section-title">3. ค่า SpO₂ (Scale 2)</div>
+            <div class="option-button border-red" onclick="finish(3)">≤ 83 %</div>
+            <div class="option-button border-orange" onclick="finish(2)">84 - 85 %</div>
+            <div class="option-button border-yellow" onclick="finish(1)">86 - 87 %</div>
+            <div class="option-button border-green" onclick="finish(0)">88 - 92 %</div>
+            <div class="option-button border-yellow" onclick="finish(1)">93 - 94 % (ดม O2)</div>
+            <div class="option-button border-orange" onclick="finish(2)">95 - 96 % (ดม O2)</div>
+            <div class="option-button border-red" onclick="finish(3)">≥ 97 % (ดม O2)</div>
         </div>
-        
-        <div id="end-zone" class="hide-step" style="text-align: center; padding: 10px;">
+
+        <div id="result" class="step">
+            <div class="section-title">สรุปผลการประเมิน</div>
+            <div class="result-box">
+                <p>คะแนนรวมของท่านคือ:</p>
+                <h2 id="totalScore" style="color: #0284c7; font-size: 40px;">0</h2>
+            </div>
             <button class="btn-clear" onclick="resetForm()">เริ่มประเมินใหม่</button>
         </div>
-    </div>
-
-    <div class="footer">
-        OPD รพ.ตาคลี | พัฒนาโดย <span class="dev-name">Khemika-OPD Takhli</span>
     </div>
 </div>
 
 <script>
-    let newsScores = {};
+    let totalScore = 0;
 
-    function selectAndShowNext(element, score, nextSectionId) {
-        // 1. ไฮไลต์ปุ่มเฉพาะข้อปัจจุบัน
-        const currentSection = element.closest('.section-box');
-        const siblingButtons = currentSection.querySelectorAll('.option-button');
-        siblingButtons.forEach(btn => btn.classList.remove('active'));
-        element.classList.add('active');
-        
-        // 2. บันทึกผลคะแนนลงระบบ
-        const currentId = currentSection.id;
-        newsScores[currentId] = score;
-
-        // 3. ปลดล็อกเปิดแสดงผลข้อถัดไป (Remove Class 'hide-step')
-        const targetElement = document.getElementById(nextSectionId);
-        if (targetElement) {
-            targetElement.classList.remove('hide-step'); // ปลดล็อกซ่อน ให้กล่องแสดงผลขึ้นมา
-            
-            // เลื่อนหน้าจอลงมาหาข้อที่เพิ่งเปิดแบบ Smooth
-            setTimeout(() => {
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 150);
-        }
+    function nextStep(score, nextId) {
+        totalScore += score;
+        document.querySelector('.step.active').classList.remove('active');
+        document.getElementById(nextId).classList.add('active');
     }
 
-    // ฟังก์ชันรีเซ็ตค่า ซ่อนหัวข้อเพื่อเริ่มประเมินใหม่
+    function finish(score) {
+        totalScore += score;
+        document.querySelector('.step.active').classList.remove('active');
+        document.getElementById('result').classList.add('active');
+        document.getElementById('totalScore').innerText = totalScore;
+    }
+
     function resetForm() {
-        newsScores = {};
-        document.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('active'));
-        document.getElementById('news-spo2-scale1').classList.add('hide-step');
-        document.getElementById('news-spo2-scale2').classList.add('hide-step');
-        document.getElementById('end-zone').classList.add('hide-step');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        totalScore = 0;
+        document.querySelector('.step.active').classList.remove('active');
+        document.getElementById('step1').classList.add('active');
     }
 </script>
 
