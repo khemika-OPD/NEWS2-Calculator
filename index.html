@@ -5,141 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEWS 2 Calculator - โดย เขมิกา พงษ์ศรี</title>
     <style>
-        :root {
-            --primary-blue: #0284c7;
-            --bg-gray: #f8fafc;
-            --text-dark: #1e293b;
-            
-            /* Severity Colors (Pastel Accent) */
-            --c-high-bg: #fef2f2;
-            --c-high-border: #fee2e2;
-            --c-high-text: #991b1b;
-            
-            --c-med-bg: #fff7ed;
-            --c-med-border: #ffedd5;
-            --c-med-text: #c2410c;
-            
-            --c-low-bg: #fefce8;
-            --c-low-border: #fef9c3;
-            --c-low-text: #854d0e;
-            
-            --c-normal-bg: #f0fdf4;
-            --c-normal-border: #dcfce7;
-            --c-normal-text: #166534;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body { 
-            font-family: 'Sarabun', sans-serif; 
-            background-color: #f1f5f9; 
-            margin: 0; 
-            padding: 12px; 
-            display: flex; 
-            justify-content: center; 
-        }
-
-        .container { 
-            background: white; 
-            max-width: 450px; 
-            width: 100%; 
-            border-radius: 16px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05); 
-            border: 1px solid #e2e8f0; 
-        }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; }
+        .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
         
-        .header { 
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
-            color: white; 
-            padding: 16px 20px; 
-            text-align: center; 
-        }
-        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
-        .header p { margin: 2px 0 0; opacity: 0.85; font-size: 12px; }
+        .header { background: #0284c7; color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .header p { margin: 5px 0 0; opacity: 0.9; font-size: 12px; }
         
-        .content { padding: 16px; }
+        .content { padding: 15px; }
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .section-title::before { content: ''; display: block; width: 4px; height: 18px; background: #0284c7; border-radius: 2px; }
+
+        .option-row { display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+        .option-row:hover { background: #f8fafc; }
+        .option-text { font-size: 14px; font-weight: 600; color: #334155; }
         
-        .section-box {
-            margin-bottom: 12px;
-        }
+        /* สไตล์ป้ายคะแนนสีสันแบบเดิม */
+        .score-box { font-size: 14px; font-weight: bold; color: white; padding: 4px 12px; border-radius: 6px; min-width: 25px; text-align: center; }
+        .bg-red { background: #ef4444; }
+        .bg-yellow { background: #eab308; }
+        .bg-green { background: #10b981; }
+        .bg-orange { background: #f97316; }
 
-        .section-title { 
-            font-size: 15px; 
-            font-weight: bold; 
-            color: var(--text-dark); 
-            margin-bottom: 8px; 
-            padding-bottom: 4px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        /* โครงสร้างปุ่มแนวนอนเต็มจอแบบเดิม แต่ปรับให้กระชับขึ้น */
-        .option-button {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 10px 16px; /* ลด Padding ลงเพื่อให้ปุ่มแคบและกระชับ */
-            margin-bottom: 6px; /* ลดระยะห่างระหว่างปุ่ม */
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .option-button:hover {
-            background: #f8fafc;
-            transform: translateY(-1px);
-        }
-
-        /* สถานะเมื่อถูกกดเลือก (Active) */
-        .option-button.active {
-            border-width: 2px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-
-        .option-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .score-badge {
-            font-size: 12px;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 6px;
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        /* คลาสกำหนดสีสันตามดีไซน์เดิมแต่เนียนขึ้น */
-        .option-button.active.score-3 { background-color: var(--c-high-bg); border-color: var(--c-high-border); }
-        .option-button.active.score-3 .option-text { color: var(--c-high-text); }
-        .option-button.active.score-3 .score-badge { background: var(--c-high-border); color: var(--c-high-text); }
-
-        .option-button.active.score-2 { background-color: var(--c-med-bg); border-color: var(--c-med-border); }
-        .option-button.active.score-2 .option-text { color: var(--c-med-text); }
-        .option-button.active.score-2 .score-badge { background: var(--c-med-border); color: var(--c-med-text); }
-
-        .option-button.active.score-1 { background-color: var(--c-low-bg); border-color: var(--c-low-border); }
-        .option-button.active.score-1 .option-text { color: var(--c-low-text); }
-        .option-button.active.score-1 .score-badge { background: var(--c-low-border); color: var(--c-low-text); }
-
-        .option-button.active.score-0 { background-color: var(--c-normal-bg); border-color: var(--c-normal-border); }
-        .option-button.active.score-0 .option-text { color: var(--c-normal-text); }
-        .option-button.active.score-0 .score-badge { background: var(--c-normal-border); color: var(--c-normal-text); }
-
-        .footer { 
-            background: #f8fafc; 
-            padding: 12px; 
-            text-align: center; 
-            font-size: 11px; 
-            color: #64748b; 
-            border-top: 1px solid #e2e8f0; 
-        }
-        .dev-name { color: var(--primary-blue); font-weight: bold; }
+        .footer { padding: 15px; text-align: center; font-size: 11px; color: #64748b; background: #f8fafc; border-top: 1px solid #e2e8f0; }
     </style>
 </head>
 <body>
@@ -151,51 +39,39 @@
     </div>
 
     <div class="content">
-        <div class="section-box">
-            <div class="section-title">1. อัตราการหายใจ (Respiratory Rate)</div>
-            
-            <div class="option-button score-3" onclick="selectOption(this, 3)">
-                <span class="option-text">≤ 8 ครั้ง/นาที</span>
-                <span class="score-badge">3 คะแนน</span>
-            </div>
-
-            <div class="option-button score-1" onclick="selectOption(this, 1)">
-                <span class="option-text">9 - 11 ครั้ง/นาที</span>
-                <span class="score-badge">1 คะแนน</span>
-            </div>
-
-            <div class="option-button score-0" onclick="selectOption(this, 0)">
-                <span class="option-text">12 - 20 ครั้ง/นาที</span>
-                <span class="score-badge">0 คะแนน</span>
-            </div>
-
-            <div class="option-button score-2" onclick="selectOption(this, 2)">
-                <span class="option-text">21 - 24 ครั้ง/นาที</span>
-                <span class="score-badge">2 คะแนน</span>
-            </div>
-
-            <div class="option-button score-3" onclick="selectOption(this, 3)">
-                <span class="option-text">≥ 25 ครั้ง/นาที</span>
-                <span class="score-badge">3 คะแนน</span>
-            </div>
+        <div class="section-title">1. อัตราการหายใจ (Respiratory Rate)</div>
+        
+        <div class="option-row" onclick="select(this)">
+            <span class="option-text">≤ 8 ครั้ง/นาที</span>
+            <span class="score-box bg-red">3</span>
+        </div>
+        <div class="option-row" onclick="select(this)">
+            <span class="option-text">9 - 11 ครั้ง/นาที</span>
+            <span class="score-box bg-yellow">1</span>
+        </div>
+        <div class="option-row" onclick="select(this)">
+            <span class="option-text">12 - 20 ครั้ง/นาที</span>
+            <span class="score-box bg-green">0</span>
+        </div>
+        <div class="option-row" onclick="select(this)">
+            <span class="option-text">21 - 24 ครั้ง/นาที</span>
+            <span class="score-box bg-orange">2</span>
+        </div>
+        <div class="option-row" onclick="select(this)">
+            <span class="option-text">≥ 25 ครั้ง/นาที</span>
+            <span class="score-box bg-red">3</span>
         </div>
     </div>
 
     <div class="footer">
-        พัฒนาโดย <span class="dev-name">Khemika-OPD Takhli</span>
+        พัฒนาโดย <span style="color:#0284c7; font-weight:bold;">Khemika-OPD Takhli</span>
     </div>
 </div>
 
 <script>
-    function selectOption(element, score) {
-        // ค้นหาเฉพาะปุ่มภายในกลุ่มเดียวกันเพื่อลบสถานะ active เดิม
-        const section = element.closest('.section-box');
-        const buttons = section.querySelectorAll('.option-button');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        // เพิ่มสถานะ active ให้ปุ่มที่ถูกกด
-        element.classList.add('active');
-        console.log("คะแนนที่เลือก:", score);
+    function select(element) {
+        document.querySelectorAll('.option-row').forEach(el => el.style.borderColor = '#e2e8f0');
+        element.style.borderColor = '#0284c7';
     }
 </script>
 
