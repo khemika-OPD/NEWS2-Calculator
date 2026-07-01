@@ -3,105 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEWS 2 Calculator - โดย เขมิกา พงษ์ศรี</title>
+    <title>NEWS 2 Calculator (Step Color)</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; margin: 0; }
         
         .container { background: white; max-width: 450px; width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
         
-        /* ส่วนหัวสีน้ำเงินโทนสากลตามภาพ */
-        .header { background: #4f70b5; color: white; padding: 25px 20px; text-align: center; }
-        .header h1 { margin: 0; font-size: 26px; font-weight: bold; letter-spacing: 1px; }
-        .header p { margin: 6px 0 0; opacity: 0.9; font-size: 13px; }
+        /* หัวข้อส่วนบนสีน้ำเงินตามภาพลักษณ์ดั้งเดิม */
+        .header { background: #0284c7; color: white; padding: 22px 15px; text-align: center; }
+        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+        .header p { margin: 4px 0 0; opacity: 0.9; font-size: 13px; }
         
         .content { padding: 20px; }
         
-        .section-box { margin-bottom: 25px; padding-bottom: 10px; }
-        .section-title { font-size: 18px; font-weight: bold; color: #1e293b; margin-bottom: 15px; }
+        .section-box { margin-bottom: 30px; padding-bottom: 10px; }
+        
+        /* ชื่อหัวข้อจัดกึ่งกลางและใช้สีน้ำเงินตามภาพ */
+        .section-title { font-size: 18px; font-weight: bold; color: #025a9e; margin-bottom: 20px; text-align: center; }
 
-        /* ปุ่มกดแถวยาวเต็มหน้าจอตามแบบดั้งเดิมของอาจารย์ */
+        /* โครงสร้างปุ่มกดตามแบบภาพ image_17bad7.png */
         .option-button {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
+            padding: 14px 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: bold;
-            color: #334155;
+            background: #ffffff;
             cursor: pointer;
             transition: all 0.15s ease;
             text-align: center;
         }
 
-        /* สีพื้นหลังพาสเทลและสีขอบของแต่ละระดับคะแนน (ตามแบบภาพ) */
-        .color-red { background-color: #e49e8d; border: 1.5px solid #d38977; }
-        .color-yellow { background-color: #fcf4b6; border: 1.5px solid #ebd09c; }
-        .color-normal { background-color: #ffffff; border: 1.5px solid #cbd5e1; }
-        .color-orange { background-color: #eed0a5; border: 1.5px solid #dcb588; }
+        /* รหัสสีขอบและสีอักษรของปุ่มตามเกณฑ์แพทย์ (ตรงตามภาพเป๊ะๆ) */
+        .border-red { border: 1.5px solid #ef4444; color: #ef4444; }
+        .border-yellow { border: 1.5px solid #eab308; color: #eab308; }
+        .border-green { border: 1.5px solid #10b981; color: #10b981; }
+        .border-orange { border: 1.5px solid #f97316; color: #f97316; }
 
         /* เอฟเฟกต์เมื่อนำเมาส์ไปชี้ */
         .option-button:hover {
+            background-color: #fffafb;
             transform: translateY(-1px);
-            filter: brightness(0.95);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
         }
 
-        /* เอฟเฟกต์ไฮไลต์เข้มขึ้นเมื่อปุ่มนั้นถูกกดเลือก */
+        /* เมื่อปุ่มถูกคลิกเลือก จะถมสีพื้นหลังพาสเทลให้เห็นชัดเจน */
+        .option-button.active.border-red { background-color: #fef2f2; }
+        .option-button.active.border-yellow { background-color: #fefce8; }
+        .option-button.active.border-green { background-color: #f0fdf4; }
+        .option-button.active.border-orange { background-color: #fff7ed; }
+        
         .option-button.active {
-            box-shadow: 0 0 0 3px #4f70b5;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
             border-width: 2.5px;
         }
 
         .footer { padding: 15px; text-align: center; font-size: 12px; color: #64748b; background: #f8fafc; border-top: 1px solid #e2e8f0; }
-        .dev-name { color: #4f70b5; font-weight: bold; }
+        .dev-name { color: #0284c7; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>NEWS 2</h1>
-        <p>National Early Warning Score</p>
+        <h1>NEWS 2 Calculator (Step Color)</h1>
+        <p>OPD รพ.ตาคลี | พัฒนาโดย Khemika-OPD Takhli</p>
     </div>
 
     <div class="content">
+        <!-- หัวข้อที่ 1 -->
         <div class="section-box" id="step-1">
-            <div class="section-title">Respiration rate (per minute)</div>
+            <div class="section-title">1. อัตราการหายใจ (RR)</div>
             
-            <div class="option-button color-red" onclick="selectAndNext(this, 3, 'step-2')">
-                ≤8
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'step-2')">
+                ≤ 8 ครั้ง/นาที
             </div>
-            <div class="option-button color-yellow" onclick="selectAndNext(this, 1, 'step-2')">
-                9-11
+            <div class="option-button border-yellow" onclick="selectAndNext(this, 1, 'step-2')">
+                9 - 11 ครั้ง/นาที
             </div>
-            <div class="option-button color-normal" onclick="selectAndNext(this, 0, 'step-2')">
-                12-20
+            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'step-2')">
+                12 - 20 ครั้ง/นาที
             </div>
-            <div class="option-button color-orange" onclick="selectAndNext(this, 2, 'step-2')">
-                21-24
+            <div class="option-button border-orange" onclick="selectAndNext(this, 2, 'step-2')">
+                21 - 24 ครั้ง/นาที
             </div>
-            <div class="option-button color-red" onclick="selectAndNext(this, 3, 'step-2')">
-                ≥25
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'step-2')">
+                ≥ 25 ครั้ง/นาที
             </div>
         </div>
 
-        <div class="section-box" id="step-2" style="border-top: 1px dashed #cbd5e1; padding-top: 20px;">
-            <div class="section-title">SpO₂ Scale 1 (%)</div>
+        <!-- หัวข้อที่ 2 (ทำไว้เพื่อรองรับการกดแล้วเลื่อนหน้าจอลงมาอัตโนมัติ) -->
+        <div class="section-box" id="step-2" style="border-top: 1px dashed #e2e8f0; padding-top: 20px;">
+            <div class="section-title">2. ค่าความอิ่มตัวของออกซิเจน (SpO₂)</div>
             
-            <div class="option-button color-red" onclick="selectAndNext(this, 3, 'result-zone')">
-                ≤91
+            <div class="option-button border-red" onclick="selectAndNext(this, 3, 'result-zone')">
+                ≤ 91 %
             </div>
-            <div class="option-button color-orange" onclick="selectAndNext(this, 2, 'result-zone')">
-                92-93
-            </div>
-            <div class="option-button color-yellow" onclick="selectAndNext(this, 1, 'result-zone')">
-                94-95
-            </div>
-            <div class="option-button color-normal" onclick="selectAndNext(this, 0, 'result-zone')">
-                ≥96
+            <div class="option-button border-green" onclick="selectAndNext(this, 0, 'result-zone')">
+                ≥ 96 %
             </div>
         </div>
         
@@ -114,27 +118,27 @@
 </div>
 
 <script>
-    // ตัวแปรเก็บคะแนนรวมรายข้อ
+    // ระบบบันทึกคะแนนรวมรายข้อหลังบ้าน
     let scores = { 'step-1': null, 'step-2': null };
 
     function selectAndNext(element, score, nextStepId) {
-        // 1. จัดการคลาส active เพื่อทำไฮไลต์ขอบปุ่มที่ถูกกดในกลุ่มนั้น ๆ
+        // 1. จัดการไฮไลต์ปุ่มที่เลือกในกลุ่มปัจจุบัน
         const section = element.closest('.section-box');
         const buttons = section.querySelectorAll('.option-button');
         buttons.forEach(btn => btn.classList.remove('active'));
         element.classList.add('active');
         
-        // 2. บันทึกค่าคะแนนลงระบบหลังบ้าน
+        // 2. บันทึกคะแนน
         const currentStepId = section.id;
         scores[currentStepId] = score;
-        console.log(`บันทึกคะแนน ${currentStepId} = ${score}`);
+        console.log(`บันทึกข้อ ${currentStepId} = ${score} คะแนน`);
 
-        // 3. ตรรกะกระโดดเลื่อนหน้าจอไปยังข้อถัดไปโดยอัตโนมัติ (Auto-scroll)
+        // 3. ระบบเลื่อนหน้าจอไปยังส่วนถัดไปทันทีอย่างนุ่มนวล (Auto-scroll)
         const nextTarget = document.getElementById(nextStepId);
         if (nextTarget) {
             setTimeout(() => {
                 nextTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 180); // หน่วงเวลา 0.18 วินาทีให้ผู้ใช้งานเห็นว่าปุ่มถูกกดเลือกเรียบร้อยแล้วจึงเลื่อนหน้าจอ
+            }, 180); // หน่วงเวลา 0.18 วินาทีให้เห็นเอฟเฟกต์การเลือกก่อนเลื่อนจอ
         }
     }
 </script>
