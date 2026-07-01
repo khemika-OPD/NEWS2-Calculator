@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEWS 2 Calculator - Full Version โดย เขมิกา พงษ์ศรี</title>
+    <!-- ใส่ไลบรารี QRCode กลับเข้ามา -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; padding: 15px; display: flex; justify-content: center; margin: 0; }
@@ -39,11 +41,17 @@
         .border-orange { border: 2px solid #f97316; color: #f97316; }
         .border-yellow { border: 2px solid #eab308; color: #eab308; }
         .border-green { border: 2px solid #10b981; color: #10b981; }
-        .border-blue { border: 2px solid #0284c7; color: #0284c7; } /* สำหรับปุ่มเลือกทั่วไป */
+        .border-blue { border: 2px solid #0284c7; color: #0284c7; }
 
         .result-box { text-align: center; padding: 25px; border-radius: 15px; margin-top: 15px; }
-        .btn-reset { width: 100%; padding: 15px; background: #475569; color: white; border: none; border-radius: 10px; margin-top: 20px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-reset { width: 100%; padding: 15px; background: #475569; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; font-size: 16px; font-weight: bold; }
         .btn-reset:hover { background: #334155; }
+
+        /* ส่วนสไตล์ของโซน QR Code */
+        .qr-section { text-align: center; padding: 15px 10px 5px 10px; border-top: 1px dashed #cbd5e1; margin-top: 20px; }
+        .btn-qr { background: #e0f2fe; color: #0369a1; padding: 10px 18px; border-radius: 20px; font-size: 14px; border: none; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
+        .btn-qr:hover { background: #bae6fd; }
+        #qrcode { display: flex; justify-content: center; margin-top: 15px; padding: 10px; background: #ffffff; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -55,6 +63,7 @@
     </div>
 
     <div class="content" id="quiz">
+        <!-- 1. อัตราการหายใจ -->
         <div id="s1" class="step active">
             <div class="section-title">1. อัตราการหายใจ (RR)</div>
             <div class="option-button border-red" onclick="saveScore('rr', 3, 's2')">≤ 8 ครั้ง/นาที</div>
@@ -64,12 +73,14 @@
             <div class="option-button border-red" onclick="saveScore('rr', 3, 's2')">≥ 25 ครั้ง/นาที</div>
         </div>
 
+        <!-- 2. เลือกกลุ่มผู้ป่วย -->
         <div id="s2" class="step">
             <div class="section-title">2. เลือกกลุ่มเป้าหมาย SpO2</div>
             <div class="option-button border-blue" onclick="saveScore('scale_type', 1, 's3_scale1')">Scale 1 (ผู้ป่วยทั่วไป)</div>
             <div class="option-button border-blue" onclick="saveScore('scale_type', 2, 's3_scale2')">Scale 2 (กลุ่มเสี่ยง/COPD)</div>
         </div>
 
+        <!-- 3.1 ค่า SpO2 สำหรับผู้ป่วยทั่วไป -->
         <div id="s3_scale1" class="step">
             <div class="section-title">3. ค่า SpO2 (Scale 1)</div>
             <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≤ 91%</div>
@@ -78,6 +89,7 @@
             <div class="option-button border-green" onclick="saveScore('spo2', 0, 's4')">≥ 96%</div>
         </div>
 
+        <!-- 3.2 ค่า SpO2 สำหรับผู้ป่วย COPD -->
         <div id="s3_scale2" class="step">
             <div class="section-title">3. ค่า SpO2 (Scale 2 - COPD)</div>
             <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≤ 83%</div>
@@ -89,12 +101,14 @@
             <div class="option-button border-red" onclick="saveScore('spo2', 3, 's4')">≥ 97% (ได้ O₂ Supp)</div>
         </div>
 
+        <!-- 4. การได้รับออกซิเจนบำบัด -->
         <div id="s4" class="step">
             <div class="section-title">4. การได้รับออกซิเจนบำบัด</div>
             <div class="option-button border-green" onclick="saveScore('o2_supp', 0, 's5')">Air (อากาศปกติ)</div>
             <div class="option-button border-orange" onclick="saveScore('o2_supp', 2, 's5')">Oxygen Supplement (ดมออกซิเจน)</div>
         </div>
 
+        <!-- 5. ความดันโลหิตตัวบน -->
         <div id="s5" class="step">
             <div class="section-title">5. ความดันโลหิตตัวบน SBP (mmHg)</div>
             <div class="option-button border-red" onclick="saveScore('sbp', 3, 's6')">≤ 90</div>
@@ -106,6 +120,7 @@
         
         <div id="s5_normal" class="step" style="display:none;"></div>
 
+        <!-- 6. อัตราชีพจร -->
         <div id="s6" class="step">
             <div class="section-title">6. ชีพจร / อัตราเต้นหัวใจ (Pulse)</div>
             <div class="option-button border-red" onclick="saveScore('pulse', 3, 's7')">≤ 40 ครั้ง/นาที</div>
@@ -116,12 +131,14 @@
             <div class="option-button border-red" onclick="saveScore('pulse', 3, 's7')">≥ 131 ครั้ง/นาที</div>
         </div>
 
+        <!-- 7. ระบบประสาทและความรู้สึกตัว -->
         <div id="s7" class="step">
             <div class="section-title">7. ระดับความรู้สึกตัว (ACVPU)</div>
             <div class="option-button border-green" onclick="saveScore('acvpu', 0, 's8')">Alert (ตื่นรู้ตัวดี)</div>
             <div class="option-button border-red" onclick="saveScore('acvpu', 3, 's8')">Confusion / V / P / U (สับสน/ไม่รู้ตัว)</div>
         </div>
 
+        <!-- 8. อุณหภูมิร่างกาย -->
         <div id="s8" class="step">
             <div class="section-title">8. อุณหภูมิร่างกาย (°C)</div>
             <div class="option-button border-red" onclick="calculateFinal(3)">≤ 35.0 °C</div>
@@ -131,28 +148,33 @@
             <div class="option-button border-orange" onclick="calculateFinal(2)">≥ 39.1 °C</div>
         </div>
 
+        <!-- กล่องแสดงผลลัพธ์ท้ายสุด -->
         <div id="result" class="step">
             <div class="section-title">สรุปผลการประเมิน</div>
             <div id="res-box" class="result-box">
                 <h2 id="finalScore" style="margin:0; font-size: 55px;">0</h2>
                 <p id="msg" style="font-size: 16px; font-weight: bold; margin-top: 10px; line-height: 1.5;"></p>
             </div>
+            
+            <!-- โซน QR Code สำหรับแชร์ ที่ดึงกลับมาตามดีไซน์เดิม -->
+            <div class="qr-section">
+                <button class="btn-qr" onclick="toggleQR()">แสดง/ซ่อน QR สำหรับแชร์</button>
+                <div id="qr-container" style="display:none;">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+
             <button class="btn-reset" onclick="reset()">เริ่มประเมินใหม่ (Clear Data)</button>
         </div>
     </div>
 </div>
 
 <script>
-    // อ็อบเจกต์โครงสร้างล้างตัวแปร ป้องกันปัญหาคะแนนทับถมสะสมค้างเคสเก่า
     let currentScores = { rr: 0, scale_type: 1, spo2: 0, o2_supp: 0, sbp: 0, pulse: 0, acvpu: 0, temp: 0 };
 
     function saveScore(param, val, nextStepId) {
-        currentScores[param] = val; // บันทึกแทนที่ค่าเก่าโดยตรง ปลอดภัยต่อการกดซ้ำ
-        
-        // จัดการเปิด-ซ่อนหน้าจอทีละส่วน
+        currentScores[param] = val; 
         document.querySelector('.step.active').classList.remove('active');
-        
-        // จัดการดักเคสพิเศษกรณี SBP ค่าปกติให้อ้อมไปโผล่ที่ชีพจรข้อ 6 ทันที
         let actualNext = nextStepId === 's5_normal' ? 's6' : nextStepId;
         document.getElementById(actualNext).classList.add('active');
     }
@@ -160,7 +182,6 @@
     function calculateFinal(tempScore) {
         currentScores['temp'] = tempScore;
         
-        // รวมคะแนนจากทุกตัวแปรรายข้อที่แท้จริง
         let total = currentScores.rr + currentScores.spo2 + currentScores.o2_supp + 
                     currentScores.sbp + currentScores.pulse + currentScores.acvpu + currentScores.temp;
 
@@ -171,7 +192,6 @@
         const resBox = document.getElementById('res-box');
         const msgDiv = document.getElementById('msg');
         
-        // เกณฑ์ระดับการตอบสนองเชิงคลินิกมาตรฐานสากล (NEWS 2 Clinical Response Thresholds)
         if (total === 0) {
             msgDiv.innerText = "ความเสี่ยงต่ำมาก (Low Risk) — ตรวจติดตามอาการตามเกณฑ์ปกติ";
             resBox.style.background = "#d4edda"; resBox.style.borderColor = "#c3e6cb"; msgDiv.style.color = "#155724";
@@ -187,9 +207,23 @@
         }
     }
 
+    // วัตถุเริ่มต้นสร้าง QR Code อิงตาม URL ปัจจุบัน
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href,
+        width: 128,
+        height: 128
+    });
+
+    // ฟังก์ชัน สลับเปิด-ปิด กล่อง QR Code
+    function toggleQR() {
+        var x = document.getElementById("qr-container");
+        x.style.display = (x.style.display === "none") ? "block" : "none";
+    }
+
     function reset() {
         currentScores = { rr: 0, scale_type: 1, spo2: 0, o2_supp: 0, sbp: 0, pulse: 0, acvpu: 0, temp: 0 };
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('qr-container').style.display = 'none'; // ซ่อนกล่อง QR เสมอเมื่อเริ่มใหม่
         document.getElementById('s1').classList.add('active');
     }
 </script>
