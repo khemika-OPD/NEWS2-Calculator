@@ -72,30 +72,26 @@
             border-radius: 2px;
         }
 
-        /* Grid Layout สำหรับจัดเรียงแนวนอน ลดพื้นที่ว่าง */
+        /* *** แก้ไขจุดนี้: ใช้ CSS Grid แทน Table เพื่อควบคุมขนาดปุ่มให้เท่ากันทุกแถว *** */
         .options-grid {
-            display: table;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 8px;
-        }
-
-        .grid-row {
-            display: table-row;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* แบ่งเป็น 2 คอลัมน์เท่ากันเป๊ะ */
+            gap: 8px; /* ระยะห่างระหว่างปุ่ม */
         }
 
         /* Compact Card Style */
         .compact-card {
-            display: table-cell;
-            width: 50%;
             background: #f8fafc;
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
             padding: 10px 12px;
-            vertical-align: middle;
             cursor: pointer;
             transition: all 0.15s ease;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 48px; /* ล็อกความสูงขั้นต่ำให้ปุ่มดูสม่ำเสมอ */
         }
 
         .compact-card:hover {
@@ -111,8 +107,8 @@
         }
 
         .card-content {
-            display: block;
-            padding-right: 35px; /* เผื่อพื้นที่ให้ป้ายคะแนนขวา */
+            flex: 1;
+            padding-right: 8px;
         }
 
         .option-desc {
@@ -120,21 +116,19 @@
             font-weight: 600;
             color: #334155;
             display: block;
+            line-height: 1.2;
         }
 
         /* ป้ายคะแนนขนาดเล็กกะทัดรัดที่มุมขวา */
         .score-indicator {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
             font-size: 12px;
             font-weight: bold;
             color: white;
             padding: 3px 8px;
             border-radius: 8px;
             text-align: center;
-            min-width: 32px;
+            min-width: 30px;
+            flex-shrink: 0;
         }
 
         /* สีป้ายคะแนนตามระดับความเสี่ยง */
@@ -167,45 +161,39 @@
             <div class="section-title">1. อัตราการหายใจ (Respiratory Rate)</div>
             
             <div class="options-grid">
-                <div class="grid-row">
-                    <div class="compact-card" onclick="selectOption(this, 3)">
-                        <div class="card-content">
-                            <span class="option-desc">≤ 8 ครั้ง/นาที</span>
-                        </div>
-                        <span class="score-indicator bg-high">3</span>
+                <div class="compact-card" onclick="selectOption(this, 3)">
+                    <div class="card-content">
+                        <span class="option-desc">≤ 8 ครั้ง/นาที</span>
                     </div>
-                    <div class="compact-card" onclick="selectOption(this, 1)">
-                        <div class="card-content">
-                            <span class="option-desc">9 - 11 ครั้ง/นาที</span>
-                        </div>
-                        <span class="score-indicator bg-low">1</span>
-                    </div>
+                    <span class="score-indicator bg-high">3</span>
                 </div>
                 
-                <div class="grid-row">
-                    <div class="compact-card" onclick="selectOption(this, 0)">
-                        <div class="card-content">
-                            <span class="option-desc">12 - 20 ครั้ง/นาที</span>
-                        </div>
-                        <span class="score-indicator bg-normal">0</span>
+                <div class="compact-card" onclick="selectOption(this, 1)">
+                    <div class="card-content">
+                        <span class="option-desc">9 - 11 ครั้ง/นาที</span>
                     </div>
-                    <div class="compact-card" onclick="selectOption(this, 2)">
-                        <div class="card-content">
-                            <span class="option-desc">21 - 24 ครั้ง/นาที</span>
-                        </div>
-                        <span class="score-indicator bg-med">2</span>
-                    </div>
+                    <span class="score-indicator bg-low">1</span>
                 </div>
-            </div>
-
-            <div class="options-grid" style="margin-top: -4px;">
-                <div class="grid-row">
-                    <div class="compact-card" style="width: 100%;" onclick="selectOption(this, 3)">
-                        <div class="card-content">
-                            <span class="option-desc">≥ 25 ครั้ง/นาที</span>
-                        </div>
-                        <span class="score-indicator bg-high">3</span>
+                
+                <div class="compact-card" onclick="selectOption(this, 0)">
+                    <div class="card-content">
+                        <span class="option-desc">12 - 20 ครั้ง/นาที</span>
                     </div>
+                    <span class="score-indicator bg-normal">0</span>
+                </div>
+                
+                <div class="compact-card" onclick="selectOption(this, 2)">
+                    <div class="card-content">
+                        <span class="option-desc">21 - 24 ครั้ง/นาที</span>
+                    </div>
+                    <span class="score-indicator bg-med">2</span>
+                </div>
+                
+                <div class="compact-card" onclick="selectOption(this, 3)">
+                    <div class="card-content">
+                        <span class="option-desc">≥ 25 ครั้ง/นาที</span>
+                    </div>
+                    <span class="score-indicator bg-high">3</span>
                 </div>
             </div>
         </div>
